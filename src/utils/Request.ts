@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import qs from 'qs'; // 引入 qs 库用于处理 URL 编码的请求体
+import message from './Message';
 
 interface Results<T> {
     code: number;
@@ -36,13 +37,13 @@ service.interceptors.response.use(
         const res = response.data;
         if (res.code !== 200) {
             // 错误提示可以扩展
-            console.error(res.message || '请求错误');
+            // message.error(res.message || '请求失败');
             return Promise.reject(res);
         }
         return res;
     },
     (error) => {
-        console.error(error.message || '请求失败');
+        // message.error(error.message || '网络错误，请稍后再试！'); // 错误提示
         return Promise.reject(error);
     }
 );
