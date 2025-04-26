@@ -12,6 +12,7 @@ export default defineConfig({
     vueDevTools(),
     vueJsxPlugin()
   ],
+
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     alias: {
@@ -19,6 +20,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 5173,
     proxy: {
       '/deslre': {
