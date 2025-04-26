@@ -1,18 +1,12 @@
 <template>
     <div class="layout">
-        <!-- 顶部导航，传入切换菜单的方法 -->
         <HeaderComponent @toggle-aside="toggleAside" />
-
         <div class="main-container">
-            <!-- 左侧菜单栏，控制显示 -->
             <AsideComponent :isAsideVisible="isAsideVisible" @close-aside="isAsideVisible = false" />
-
-            <!-- 主体内容区域 -->
             <Maincomponent />
         </div>
     </div>
 </template>
-
 
 <script setup lang="ts">
 import AsideComponent from '@/components/Layouts/AsideComponent.vue'
@@ -28,50 +22,25 @@ const toggleAside = () => {
 }
 </script>
 
-
 <style scoped>
 .layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    background: linear-gradient(135deg, #f0f2f5, #ffffff);
 }
 
 .main-container {
     display: flex;
     flex: 1;
     overflow: hidden;
-}
-
-.aside {
-    width: 220px;
-    background-color: #2f3542;
-    height: 100%;
-    /* 注意：在组件中要用这个让它充满 main-container */
-    overflow-y: auto;
-}
-
-.main {
-    flex: 1;
-    background: #f5f6fa;
-    overflow-y: auto;
-    padding: 20px;
+    background: #f9fafc;
+    border-top: 1px solid #e0e0e0;
 }
 
 @media screen and (max-width: 768px) {
     .main-container {
         flex-direction: column;
-    }
-
-    .aside {
-        width: 100%;
-        height: auto;
-        background-color: #2f3542;
-    }
-
-    .main {
-        flex: none;
-        width: 100%;
-        padding: 10px;
     }
 }
 </style>
