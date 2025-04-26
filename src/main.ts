@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import '../public/global.css'
+import '@/assets/styles/global.css'
 // import 'ant-design-vue/dist/reset.css'
 
 import App from './App.vue'
