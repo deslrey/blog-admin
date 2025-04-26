@@ -37,6 +37,49 @@ const routes: RouteRecordRaw[] = [
                         name: 'NotFound',
                         component: () => import('@/views/404.vue'),
                         meta: { title: '404', hidden: true, roles: ['admin', 'general'] }
+                    },
+                    {
+                        path: 'table',
+                        name: 'Table',
+                        meta: { title: '表格', roles: ['admin'] },
+                        children: [
+                            {
+                                path: 'table1',
+                                name: 'Table1',
+                                children: [
+                                    {
+                                        path: 'table1-1',
+                                        name: 'Table1-1',
+                                        component: () => import('@/views/table/table-1/TableView1.vue'),
+                                        meta: { title: '表格1-1', roles: ['admin'] },
+                                    },
+                                    {
+                                        path: 'table1-2',
+                                        name: 'Table1-2',
+                                        component: () => import('@/views/table/table-1/TableView2.vue'),
+                                        meta: { title: '表格1-2', roles: ['admin'] },
+                                    }
+                                ]
+                            },
+                            {
+                                path: 'table2',
+                                name: 'Table2',
+                                children: [
+                                    {
+                                        path: 'table2-1',
+                                        name: 'Table2-1',
+                                        component: () => import('@/views/table/table-2/TableView1.vue'),
+                                        meta: { title: '表格2-1', roles: ['admin'] },
+                                    },
+                                    {
+                                        path: 'table2-2',
+                                        name: 'Table2-2',
+                                        component: () => import('@/views/table/table-2/TableView2.vue'),
+                                        meta: { title: '表格2-2', roles: ['admin'] },
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },

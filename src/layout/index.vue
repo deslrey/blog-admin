@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import AsideComponent from '@/components/layouts/AsideComponent.vue'
-import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
-import Maincomponent from '@/components/layouts/Maincomponent.vue'
+import AsideComponent from '@/components/Layouts/AsideComponent.vue'
+import HeaderComponent from '@/components/Layouts/HeaderComponent.vue'
+import Maincomponent from '@/components/Layouts/Maincomponent.vue'
 
 
 </script>
