@@ -46,9 +46,15 @@ watch(
             openPaths.push('/' + segments[0])
         }
         openMenus.value = openPaths
+
+        // 🛠 新增的逻辑：路由变化时，如果是小屏幕，则自动关闭侧边栏
+        if (window.innerWidth <= 768 && props.isAsideVisible) {
+            emit('close-aside')
+        }
     },
     { immediate: true }
 )
+
 </script>
 
 <style scoped>
