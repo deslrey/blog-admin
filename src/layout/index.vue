@@ -17,6 +17,8 @@
 import AsideComponent from '@/components/layouts/AsideComponent.vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import Maincomponent from '@/components/layouts/Maincomponent.vue'
+
+
 </script>
 
 <style scoped>

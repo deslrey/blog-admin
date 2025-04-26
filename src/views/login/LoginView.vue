@@ -29,7 +29,6 @@ import { User } from '@element-plus/icons-vue'
 import request from '@/utils/Request'
 import message from '@/utils/Message'
 import { setToken } from '@/utils/getToken'
-import useUserStore from '@/stores/UserStore'
 import { useRouter } from 'vue-router'
 
 const api = {
@@ -46,12 +45,10 @@ const rules = {
     password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
 
-const useUser = useUserStore()
 const router = useRouter()
 
 const handleLogin = () => {
     setToken(loginForm.username)
-    useUser.setUserInfo(loginForm.username, ['admin'], ['all'])
     message.success('登录成功')
     router.push('/')
 }
