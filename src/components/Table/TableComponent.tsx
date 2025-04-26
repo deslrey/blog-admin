@@ -1,3 +1,4 @@
+import AntIcon from '@/utils/AntIcon'
 import { defineComponent } from 'vue'
 
 export const MenuItem = defineComponent({
@@ -12,21 +13,27 @@ export const MenuItem = defineComponent({
         return () => {
             if (props.item.children && props.item.children.length) {
                 return (
-                    <el-sub-menu index={props.item.path} >
+                    <el-sub-menu index={props.item.path}>
                         {{
-                            title: () => props.item.name,
+                            title: () => (
+                                <>
+                                    <AntIcon type={props.item.icon} style="margin-right: 8px;" />
+                                    {props.item.name}
+                                </>
+                            ),
                             default: () =>
                                 props.item.children.map((child: any) => (
                                     <MenuItem item={child} />
                                 ))
                         }}
-                    </el-sub-menu >
+                    </el-sub-menu>
                 )
             } else {
                 return (
-                    <el-menu-item index={props.item.path} >
+                    <el-menu-item index={props.item.path}>
+                        <AntIcon type={props.item.icon} style="margin-right: 8px;" />
                         {props.item.name}
-                    </el-menu-item >
+                    </el-menu-item>
                 )
             }
         }
