@@ -15,9 +15,9 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const menus = [
-    { name: '首页', path: '/home' },
-    { name: '用户管理', path: '/home/user' },
-    { name: '测试管理', path: '/home/test' },
+    { name: '首页', path: '/' },
+    { name: '用户管理', path: '/user' },
+    { name: '测试管理', path: '/test' },
 ]
 </script>
 

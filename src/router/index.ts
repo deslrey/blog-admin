@@ -11,11 +11,11 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'deslre',
-        redirect: '/home',
+        redirect: '/',
         // component: () => import('@/layout/index.vue'),
         children: [
             {
-                path: '/home',
+                path: '/',
                 name: 'home',
                 component: () => import('@/views/home/HomeView.vue'),
                 meta: { title: '首页', roles: ['admin', 'general'] },
