@@ -28,7 +28,7 @@ import { reactive, ref } from 'vue'
 import { User } from '@element-plus/icons-vue'
 import request from '@/utils/Request'
 import message from '@/utils/Message'
-import { setToken } from '@/utils/getToken'
+import { setToken } from '@/utils/Token'
 import { useRouter } from 'vue-router'
 
 const api = {

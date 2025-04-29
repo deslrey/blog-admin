@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { getToken, removeToken, setToken } from '@/utils/getToken';
+import { getToken, removeToken, setToken } from '@/utils/Token';
 
 
 const addLocalStorege = () => {

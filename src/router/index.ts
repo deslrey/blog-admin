@@ -1,4 +1,4 @@
-import { getToken } from "@/utils/getToken";
+import { getToken } from "@/utils/Token";
 import message from "@/utils/Message";
 import { createRouter, createWebHistory, type RouteRecordRaw, } from "vue-router";
 
