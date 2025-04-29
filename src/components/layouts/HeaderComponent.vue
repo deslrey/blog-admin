@@ -2,8 +2,24 @@
     <header class="header">
         <button class="menu-btn" @click="$emit('toggle-aside')">☰</button>
         <h1 class="title">你的系统名字</h1>
+        <button @click="logout">退出</button>
     </header>
 </template>
+
+<script setup lang="ts">
+import { removeToken } from '@/utils/Token'
+import { useRouter } from 'vue-router'
+// 你可以根据需要引入你的登录状态管理（比如 Pinia）
+
+const router = useRouter()
+
+const logout = () => {
+    // 清除登录状态
+    removeToken()
+    // 跳转到登录页
+    router.push('/login')
+}
+</script>
 
 <style scoped>
 .header {
