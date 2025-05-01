@@ -15,7 +15,6 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@toast-ui/editor": "^3.2.2",
-    "@toast-ui/vue-editor": "^3.2.3",
     "@types/highlight.js": "^10.1.0",
     "@types/qs": "^6.9.18",
     "@vitejs/plugin-vue-jsx": "^4.1.2",
