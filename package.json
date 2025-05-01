@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@toast-ui/editor": "^3",
-    "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@types/highlight.js": "^10.1.0",
     "@types/qs": "^6.9.18",
     "@vitejs/plugin-vue-jsx": "^4.1.2",
