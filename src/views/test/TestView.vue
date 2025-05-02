@@ -1,30 +1,54 @@
 <template>
-    <div>
-        <h1>测试页面</h1>
-        <el-button @click="addLocalStorege">添加localStorage</el-button>
-        <el-button @click="getLocalStorege">获取localStorage</el-button>
-        <el-button @click="removeLocalStorege">删除localStorage</el-button>
-    </div>
+    <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
 </template>
 
-<script setup lang="ts">
-import { getToken, removeToken, setToken } from '@/utils/Token';
+<script setup>
+import { ref } from 'vue';
+import { MdEditor } from 'md-editor-v3';
+import request from '@/utils/Request'
+import 'md-editor-v3/lib/style.css';
+
+const text = ref('# Hello Editor');
+
+// 保存内容
+const onSave = (v, h) => {
+    console.log(v);
+    h.then((html) => {
+        console.log(html);
+    });
+};
 
 
-const addLocalStorege = () => {
-    setToken('111111');
-}
 
-const getLocalStorege = () => {
-    const token: string = getToken();
-    console.log('token ====== > ', token);
+const onUploadImg = async (files, callback) => {
+    try {
+        const res = await Promise.all(
+            files.map((file) => {
+                const formData = new FormData();
+                formData.append('file', file);
 
-}
+                // 注意这里第三个参数用于传 headers
+                return request.post(
+                    '/api/upload',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+            })
+        );
 
-const removeLocalStorege = () => {
-    removeToken();
-}
+        console.log('图片上传成功', res);
+
+
+        // 提取上传返回的 URL 列表
+        const urls = res.map((item) => item.data.url);
+        callback(urls);
+    } catch (err) {
+        console.error('图片上传失败', err);
+    }
+};
 
 </script>
-
-<style scoped></style>
