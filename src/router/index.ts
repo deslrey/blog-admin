@@ -39,6 +39,12 @@ const routes: RouteRecordRaw[] = [
                         meta: { title: '404', hidden: true, roles: ['admin', 'general'] }
                     },
                     {
+                        path: 'edit',
+                        name: 'Edit',
+                        component: () => import('@/views/edit/EditVIew.vue'),
+                        meta: { title: '编辑', roles: ['admin'] },
+                    },
+                    {
                         path: 'table',
                         name: 'Table',
                         meta: { title: '表格', roles: ['admin'] },
