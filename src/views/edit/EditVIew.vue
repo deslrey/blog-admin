@@ -16,9 +16,12 @@
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="submitArticle">提交</el-button>
+                <div class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="submitArticle">提交</el-button>
+                </div>
             </template>
+
         </el-dialog>
     </template>
 
@@ -28,18 +31,18 @@
 import { ref } from 'vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import { ElMessage } from 'element-plus';
 import 'element-plus/dist/index.css';
 import request from '@/utils/Request';
+import message from '@/utils/Message';
 
 const api = {
-    onUploadImg: '/api/upload/img',
+    onUploadImg: '/upload/img',
+    saveArticle: '/article/saveArticle',
 };
 
-const text = ref<string>('# Hello Editor');
+const text = ref<string>("");
 const dialogVisible = ref<boolean>(false);
 let pendingMarkdown = '';
-let pendingHtml: Promise<string> | null = null
 
 
 interface ArticleData {
@@ -62,14 +65,13 @@ const articleData = ref<ArticleData>({
 
 const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
     pendingMarkdown = markdown;
-    pendingHtml = htmlPromise;
     dialogVisible.value = true;
     console.log('开启表单 ======> ', dialogVisible.value);
 
 };
 
-const submitArticle = () => {
-    if (!pendingHtml) return;
+const submitArticle = async () => {
+    if (!pendingMarkdown) return;
 
     const model =
         `---
@@ -79,21 +81,38 @@ const submitArticle = () => {
         update: ${articleData.value.update}
         readTime: ${articleData.value.readTime}
         type: ${articleData.value.type}
-        ---`
+        ---
+        
+        `
 
-    console.log('最终 Markdown:', model + pendingMarkdown);
-    pendingHtml.then((html) => {
-        console.log('HTML 内容:', html);
-        ElMessage.success('文章已保存');
-        dialogVisible.value = false;
-    });
+    const content = model + pendingMarkdown;
+    dialogVisible.value = false;
+
+    const result = await request.post(api.saveArticle, { content }, {}, 'form');
+
+    if (result.code === 200) {
+        message.success('文章保存成功');
+    } else {
+        message.error('文章保存失败');
+    }
+    clearData();
+
 };
 
 const onDialogClose = () => {
     pendingMarkdown = '';
-    pendingHtml = null;
+    dialogVisible.value = false;
+    clearData();
 };
 
+const clearData = () => {
+    articleData.value.title = '';
+    articleData.value.author = '';
+    articleData.value.description = '';
+    articleData.value.update = '';
+    articleData.value.readTime = '';
+    articleData.value.type = '';
+}
 
 const onUploadImg = async (
     files: File[],
@@ -148,5 +167,13 @@ const onUploadImg = async (
 
 .md-editor-dark {
     .css-vars(true);
+}
+
+.dialog-footer {
+    text-align: center;
+
+    .el-button {
+        margin: 0 10px;
+    }
 }
 </style>

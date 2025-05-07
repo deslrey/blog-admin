@@ -1,82 +1,81 @@
 <template>
-    <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
+
+    <button @click="isEnable = !isEnable">Toggle Form</button>
+
+    <el-form :model="form" label-width="auto" style="max-width: 600px" v-show="isEnable">
+        <el-form-item label="Activity name">
+            <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="Activity zone">
+            <el-select v-model="form.region" placeholder="please select your zone">
+                <el-option label="Zone one" value="shanghai" />
+                <el-option label="Zone two" value="beijing" />
+            </el-select>
+        </el-form-item>
+        <el-form-item label="Activity time">
+            <el-col :span="11">
+                <el-date-picker v-model="form.date1" type="date" placeholder="Pick a date" style="width: 100%" />
+            </el-col>
+            <el-col :span="2" class="text-center">
+                <span class="text-gray-500">-</span>
+            </el-col>
+            <el-col :span="11">
+                <el-time-picker v-model="form.date2" placeholder="Pick a time" style="width: 100%" />
+            </el-col>
+        </el-form-item>
+        <el-form-item label="Instant delivery">
+            <el-switch v-model="form.delivery" />
+        </el-form-item>
+        <el-form-item label="Activity type">
+            <el-checkbox-group v-model="form.type">
+                <el-checkbox value="Online activities" name="type">
+                    Online activities
+                </el-checkbox>
+                <el-checkbox value="Promotion activities" name="type">
+                    Promotion activities
+                </el-checkbox>
+                <el-checkbox value="Offline activities" name="type">
+                    Offline activities
+                </el-checkbox>
+                <el-checkbox value="Simple brand exposure" name="type">
+                    Simple brand exposure
+                </el-checkbox>
+            </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="Resources">
+            <el-radio-group v-model="form.resource">
+                <el-radio value="Sponsor">Sponsor</el-radio>
+                <el-radio value="Venue">Venue</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="Activity form">
+            <el-input v-model="form.desc" type="textarea" />
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="onSubmit">Create</el-button>
+            <el-button>Cancel</el-button>
+        </el-form-item>
+    </el-form>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { MdEditor } from 'md-editor-v3';
-import request from '@/utils/Request'
-import 'md-editor-v3/lib/style.css';
+<script lang="ts" setup>
+import { reactive, ref } from 'vue'
 
-const text = ref('# Hello Editor');
+// do not use same name with ref
+const form = reactive({
+    name: '',
+    region: '',
+    date1: '',
+    date2: '',
+    delivery: false,
+    type: [],
+    resource: '',
+    desc: '',
+})
 
-// 保存内容
-const onSave = (v, h) => {
-    console.log(v);
-    h.then((html) => {
-        console.log(html);
-    });
-};
+const isEnable = ref(false)
 
-
-
-const onUploadImg = async (files, callback) => {
-    try {
-        const res = await Promise.all(
-            files.map((file) => {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                // 注意这里第三个参数用于传 headers
-                return request.post(
-                    '/api/upload',
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    }
-                );
-            })
-        );
-
-        console.log('图片上传成功', res);
-
-
-        // 提取上传返回的 URL 列表
-        const urls = res.map((item) => item.data.url);
-        callback(urls);
-    } catch (err) {
-        console.error('图片上传失败', err);
-    }
-};
-
+const onSubmit = () => {
+    console.log('submit!')
+}
 </script>
-
-<style lang="less" scoped>
-.css-vars(@isDark) {
-    --md-color: if(@isDark, #999, #222);
-    --md-hover-color: if(@isDark, #bbb, #000);
-    --md-bk-color: if(@isDark, #000, #fff);
-    --md-bk-color-outstand: if(@isDark, #333, #f2f2f2);
-    --md-bk-hover-color: if(@isDark, #1b1a1a, #f5f7fa);
-    --md-border-color: if(@isDark, #2d2d2d, #e6e6e6);
-    --md-border-hover-color: if(@isDark, #636262, #b9b9b9);
-    --md-border-active-color: if(@isDark, #777, #999);
-    --md-modal-mask: #00000073;
-    --md-scrollbar-bg-color: if(@isDark, #0f0f0f, #e2e2e2);
-    --md-scrollbar-thumb-color: if(@isDark, #2d2d2d, #0000004d);
-    --md-scrollbar-thumb-hover-color: if(@isDark, #3a3a3a, #00000059);
-    --md-scrollbar-thumb-active-color: if(@isDark, #3a3a3a, #00000061);
-    height: 100%;
-    width: 100%;
-}
-
-.md-editor {
-    .css-vars(false);
-}
-
-.md-editor-dark {
-    .css-vars(true);
-}
-</style>
