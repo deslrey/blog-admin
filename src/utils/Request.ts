@@ -58,7 +58,7 @@ const post = <T = any>(
     if (contentType === 'form') {
         return service.post(url, qs.stringify(data), {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                 ...config?.headers, // 保证其他 headers 不丢失
             },
             ...config,
