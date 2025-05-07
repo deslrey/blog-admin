@@ -37,7 +37,7 @@ import message from '@/utils/Message';
 import dayjs from 'dayjs';
 
 const api = {
-    onUploadImg: '/upload/img',
+    onUploadImg: '/upload/image',
     saveArticle: '/article/saveArticle',
 };
 
@@ -86,21 +86,22 @@ const submitArticle = async () => {
     articleDetail.value.createDate = dayjs().toDate();
     articleDetail.value.updateDate = dayjs().toDate();
 
-    const model =
-        `---
-        title: ${articleDetail.value.title}
-        author: ${articleDetail.value.author}
-        description: ${articleDetail.value.description}
-        createTime: ${articleDetail.value.createDate ? dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}
-        updateTime: ${articleDetail.value.updateDate ? dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}}
-        wordCount: ${articleDetail.value.wordCount}
-        readTime: ${articleDetail.value.readTime}
-        type: ${articleDetail.value.type}
-        ---
+    const model = [
+        '---',
+        `title: ${articleDetail.value.title}`,
+        `author: ${articleDetail.value.author}`,
+        `description: ${articleDetail.value.description}`,
+        `createTime: ${articleDetail.value.createDate ? dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}`,
+        `updateTime: ${articleDetail.value.updateDate ? dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}`,
+        `wordCount: ${articleDetail.value.wordCount}`,
+        `readTime: ${articleDetail.value.readTime}`,
+        `type: ${articleDetail.value.type}`,
+        '---',
+        ''
+    ].join('\n');
 
-    `
 
-    const content = model + pendingMarkdown;
+    const content = model + '\n\n' + pendingMarkdown;
     articleDetail.value.content = content;
     dialogVisible.value = false;
 
