@@ -1,18 +1,18 @@
     <template>
         <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
         <el-dialog v-model="dialogVisible" title="填写文章信息" width="500px" @close="onDialogClose">
-            <el-form :model="articleData" label-width="100px">
+            <el-form :model="articleDetail" label-width="100px">
                 <el-form-item label="标题">
-                    <el-input v-model="articleData.title" />
+                    <el-input v-model="articleDetail.title" />
                 </el-form-item>
                 <el-form-item label="作者">
-                    <el-input v-model="articleData.author" />
+                    <el-input v-model="articleDetail.author" />
                 </el-form-item>
                 <el-form-item label="描述">
-                    <el-input v-model="articleData.description" />
+                    <el-input v-model="articleDetail.description" />
                 </el-form-item>
                 <el-form-item label="类型">
-                    <el-input v-model="articleData.type" />
+                    <el-input v-model="articleDetail.type" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import 'element-plus/dist/index.css';
@@ -46,20 +46,28 @@ const dialogVisible = ref<boolean>(false);
 let pendingMarkdown = '';
 
 
-interface ArticleData {
+interface ArticleDetail {
     title: string;
     author: string;
     description: string;
-    readTime: string;
+    createDate: Date | null;
+    updateDate: Date | null;
+    wordCount: number;
+    readTime: number;
     type: string;
+    content: string;
 }
 
-const articleData = ref<ArticleData>({
-    title: '',
-    author: '',
-    description: '',
-    readTime: '',
-    type: ''
+const articleDetail = ref<ArticleDetail>({
+    title: 'a',
+    author: 'a',
+    description: 'a',
+    createDate: null,
+    updateDate: null,
+    wordCount: 0,
+    readTime: 1,
+    type: 'a',
+    content: '',
 });
 
 const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
@@ -75,26 +83,28 @@ const submitArticle = async () => {
         return
     };
 
+    articleDetail.value.createDate = dayjs().toDate();
+    articleDetail.value.updateDate = dayjs().toDate();
+
     const model =
         `---
-        title: ${articleData.value.title}
-        author: ${articleData.value.author}
-        description: ${articleData.value.description}
-        createTime: ${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}
-        updateTime: ${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}
-        readTime: ${articleData.value.readTime}
-        type: ${articleData.value.type}
+        title: ${articleDetail.value.title}
+        author: ${articleDetail.value.author}
+        description: ${articleDetail.value.description}
+        createTime: ${articleDetail.value.createDate ? dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}
+        updateTime: ${articleDetail.value.updateDate ? dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}}
+        wordCount: ${articleDetail.value.wordCount}
+        readTime: ${articleDetail.value.readTime}
+        type: ${articleDetail.value.type}
         ---
 
     `
 
-
     const content = model + pendingMarkdown;
-    console.log('提交的内容 ======> ', content);
-
+    articleDetail.value.content = content;
     dialogVisible.value = false;
 
-    const result = await request.post(api.saveArticle, { content }, {}, 'form');
+    const result = await request.post(api.saveArticle, articleDetail.value);
 
     if (result.code === 200) {
         message.success('文章保存成功');
@@ -112,11 +122,15 @@ const onDialogClose = () => {
 };
 
 const clearData = () => {
-    articleData.value.title = '';
-    articleData.value.author = '';
-    articleData.value.description = '';
-    articleData.value.readTime = '';
-    articleData.value.type = '';
+    articleDetail.value.title = '';
+    articleDetail.value.author = '';
+    articleDetail.value.description = '';
+    articleDetail.value.createDate = null;
+    articleDetail.value.updateDate = null;
+    articleDetail.value.wordCount = 0;
+    articleDetail.value.readTime = 1;
+    articleDetail.value.type = '';
+    articleDetail.value.content = '';
 }
 
 const onUploadImg = async (
