@@ -34,13 +34,14 @@ import 'md-editor-v3/lib/style.css';
 import 'element-plus/dist/index.css';
 import request from '@/utils/Request';
 import message from '@/utils/Message';
+import dayjs from 'dayjs';
 
 const api = {
     onUploadImg: '/upload/img',
     saveArticle: '/article/saveArticle',
 };
 
-const text = ref<string>("");
+const text = ref<string>("# 111");
 const dialogVisible = ref<boolean>(false);
 let pendingMarkdown = '';
 
@@ -49,7 +50,6 @@ interface ArticleData {
     title: string;
     author: string;
     description: string;
-    update: string;
     readTime: string;
     type: string;
 }
@@ -58,7 +58,6 @@ const articleData = ref<ArticleData>({
     title: '',
     author: '',
     description: '',
-    update: '',
     readTime: '',
     type: ''
 });
@@ -66,26 +65,33 @@ const articleData = ref<ArticleData>({
 const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
     pendingMarkdown = markdown;
     dialogVisible.value = true;
-    console.log('开启表单 ======> ', dialogVisible.value);
-
 };
 
 const submitArticle = async () => {
-    if (!pendingMarkdown) return;
+
+
+    if (!pendingMarkdown) {
+        message.error('请先填写文章内容');
+        return
+    };
 
     const model =
         `---
         title: ${articleData.value.title}
         author: ${articleData.value.author}
         description: ${articleData.value.description}
-        update: ${articleData.value.update}
+        createTime: ${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}
+        updateTime: ${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}
         readTime: ${articleData.value.readTime}
         type: ${articleData.value.type}
         ---
-        
-        `
+
+    `
+
 
     const content = model + pendingMarkdown;
+    console.log('提交的内容 ======> ', content);
+
     dialogVisible.value = false;
 
     const result = await request.post(api.saveArticle, { content }, {}, 'form');
@@ -109,7 +115,6 @@ const clearData = () => {
     articleData.value.title = '';
     articleData.value.author = '';
     articleData.value.description = '';
-    articleData.value.update = '';
     articleData.value.readTime = '';
     articleData.value.type = '';
 }
