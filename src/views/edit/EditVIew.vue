@@ -1,26 +1,99 @@
-<template>
-    <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
-</template>
+    <template>
+        <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
+        <el-dialog v-model="dialogVisible" title="填写文章信息" width="500px" @close="onDialogClose">
+            <el-form :model="articleData" label-width="100px">
+                <el-form-item label="标题">
+                    <el-input v-model="articleData.title" />
+                </el-form-item>
+                <el-form-item label="作者">
+                    <el-input v-model="articleData.author" />
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input v-model="articleData.description" />
+                </el-form-item>
+                <el-form-item label="类型">
+                    <el-input v-model="articleData.type" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="submitArticle">提交</el-button>
+            </template>
+        </el-dialog>
+    </template>
 
-<script setup lang="ts">
+
+<script lang="ts" setup>
+
 import { ref } from 'vue';
 import { MdEditor } from 'md-editor-v3';
-import request from '@/utils/Request';
 import 'md-editor-v3/lib/style.css';
-
+import { ElMessage } from 'element-plus';
+import 'element-plus/dist/index.css';
+import request from '@/utils/Request';
 
 const api = {
-    onUploadImg: '/upload/image',
-}
+    onUploadImg: '/api/upload/img',
+};
 
 const text = ref<string>('# Hello Editor');
+const dialogVisible = ref<boolean>(false);
+let pendingMarkdown = '';
+let pendingHtml: Promise<string> | null = null
+
+
+interface ArticleData {
+    title: string;
+    author: string;
+    description: string;
+    update: string;
+    readTime: string;
+    type: string;
+}
+
+const articleData = ref<ArticleData>({
+    title: '',
+    author: '',
+    description: '',
+    update: '',
+    readTime: '',
+    type: ''
+});
 
 const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
-    console.log('Markdown 内容:', markdown);
-    htmlPromise.then((html: string) => {
-        console.log('转换后的 HTML:', html);
+    pendingMarkdown = markdown;
+    pendingHtml = htmlPromise;
+    dialogVisible.value = true;
+    console.log('开启表单 ======> ', dialogVisible.value);
+
+};
+
+const submitArticle = () => {
+    if (!pendingHtml) return;
+
+    const model =
+        `---
+        title: ${articleData.value.title}
+        author: ${articleData.value.author}
+        description: ${articleData.value.description}
+        update: ${articleData.value.update}
+        readTime: ${articleData.value.readTime}
+        type: ${articleData.value.type}
+        ---`
+
+    console.log('最终 Markdown:', model + pendingMarkdown);
+    pendingHtml.then((html) => {
+        console.log('HTML 内容:', html);
+        ElMessage.success('文章已保存');
+        dialogVisible.value = false;
     });
 };
+
+const onDialogClose = () => {
+    pendingMarkdown = '';
+    pendingHtml = null;
+};
+
 
 const onUploadImg = async (
     files: File[],
