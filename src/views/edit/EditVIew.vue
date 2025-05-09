@@ -14,6 +14,17 @@
                 <el-form-item label="类型">
                     <el-input v-model="articleDetail.type" />
                 </el-form-item>
+                <el-form-item label="封面">
+                    <el-upload class="cover-uploader" :file-list="fileList" :auto-upload="false" :limit="1" :drag='true'
+                        :on-change="handleChange" :http-request="() => { console.log('空请求提交'); }" list-type="picture">
+                        <img v-if="articleDetail.cover" :src="articleDetail.cover" class="cover-preview" />
+                        <el-icon v-else>
+                            <Plus />
+                        </el-icon>
+                    </el-upload>
+
+                </el-form-item>
+
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
@@ -28,7 +39,8 @@
 
 <script lang="ts" setup>
 
-import { ref, toRaw } from 'vue';
+import { ref } from 'vue';
+import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import 'element-plus/dist/index.css';
@@ -54,6 +66,7 @@ interface ArticleDetail {
     updateDate: Date | null;
     wordCount: number;
     readTime: number;
+    cover: string;
     type: string;
     content: string;
 }
@@ -66,9 +79,17 @@ const articleDetail = ref<ArticleDetail>({
     updateDate: null,
     wordCount: 0,
     readTime: 1,
+    cover: '',
     type: 'a',
     content: '',
 });
+
+const fileList = ref<any[]>([]);
+
+
+const handleChange = (file: any, fileListVal: any[]) => {
+    fileList.value = fileListVal;
+};
 
 const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
     pendingMarkdown = markdown;
@@ -77,11 +98,12 @@ const onSave = (markdown: string, htmlPromise: Promise<string>): void => {
 
 const submitArticle = async () => {
 
-
     if (!pendingMarkdown) {
-        message.error('请先填写文章内容');
-        return
-    };
+        message.error('文章内容不能为空');
+        return;
+    }
+
+    message.info('正在保存文章...');
 
     articleDetail.value.createDate = dayjs().toDate();
     articleDetail.value.updateDate = dayjs().toDate();
@@ -91,8 +113,8 @@ const submitArticle = async () => {
         `title: ${articleDetail.value.title}`,
         `author: ${articleDetail.value.author}`,
         `description: ${articleDetail.value.description}`,
-        `createTime: ${articleDetail.value.createDate ? dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}`,
-        `updateTime: ${articleDetail.value.updateDate ? dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss') : '暂无日期'}`,
+        `createTime: ${dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss')}`,
+        `updateTime: ${dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss')}`,
         `wordCount: ${articleDetail.value.wordCount}`,
         `readTime: ${articleDetail.value.readTime}`,
         `type: ${articleDetail.value.type}`,
@@ -100,21 +122,41 @@ const submitArticle = async () => {
         ''
     ].join('\n');
 
+    articleDetail.value.content = model + '\n\n' + pendingMarkdown;
 
-    const content = model + '\n\n' + pendingMarkdown;
-    articleDetail.value.content = content;
-    dialogVisible.value = false;
+    const formData = new FormData();
+    formData.append(
+        'articleDetail',
+        new Blob([JSON.stringify(articleDetail.value)], {
+            type: 'application/json'
+        })
+    );
 
-    const result = await request.post(api.saveArticle, articleDetail.value);
+    if (fileList.value.length > 0) {
+        formData.append('file', fileList.value[0].raw);
+    }
 
-    if (result.code === 200) {
-        message.success('文章保存成功');
-    } else {
-        message.error('文章保存失败');
+    try {
+        const result = await request.post(api.saveArticle, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (result.code === 200) {
+            message.success('文章保存成功');
+            dialogVisible.value = false;
+        } else {
+            message.error('文章保存失败');
+        }
+    } catch (e) {
+        console.error(e);
+        clearData();
+        message.error('请求失败');
     }
     clearData();
-
 };
+
 
 const onDialogClose = () => {
     pendingMarkdown = '';
@@ -123,6 +165,8 @@ const onDialogClose = () => {
 };
 
 const clearData = () => {
+    console.log('清除数据');
+
     articleDetail.value.title = '';
     articleDetail.value.author = '';
     articleDetail.value.description = '';
@@ -132,6 +176,8 @@ const clearData = () => {
     articleDetail.value.readTime = 1;
     articleDetail.value.type = '';
     articleDetail.value.content = '';
+    articleDetail.value.cover = '';
+    fileList.value = [];
 }
 
 const onUploadImg = async (
@@ -194,6 +240,27 @@ const onUploadImg = async (
 
     .el-button {
         margin: 0 10px;
+    }
+}
+
+.cover-uploader {
+    display: block;
+    width: 100%;
+
+    .el-icon {
+        font-size: 28px;
+        color: #999;
+        border: 1px dashed #d9d9d9;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cover-preview {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
     }
 }
 </style>
