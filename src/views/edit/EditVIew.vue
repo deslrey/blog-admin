@@ -107,6 +107,8 @@ const submitArticle = async () => {
 
     articleDetail.value.createDate = dayjs().toDate();
     articleDetail.value.updateDate = dayjs().toDate();
+    articleDetail.value.wordCount = pendingMarkdown.length
+    articleDetail.value.readTime = Math.ceil(pendingMarkdown.length / 400)
 
     const model = [
         '---',
@@ -144,10 +146,10 @@ const submitArticle = async () => {
         });
 
         if (result.code === 200) {
-            message.success('文章保存成功');
+            message.success(result.message);
             dialogVisible.value = false;
         } else {
-            message.error('文章保存失败');
+            message.error(result.message);
         }
     } catch (e) {
         console.error(e);
