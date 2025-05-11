@@ -11,9 +11,6 @@
                 <el-form-item label="描述">
                     <el-input v-model="articleDetail.description" />
                 </el-form-item>
-                <el-form-item label="类型">
-                    <el-input v-model="articleDetail.type" />
-                </el-form-item>
                 <el-form-item label="封面">
                     <el-upload class="cover-uploader" :file-list="fileList" :auto-upload="false" :limit="1" :drag='true'
                         :on-change="handleChange" :http-request="() => { console.log('空请求提交'); }" list-type="picture">
@@ -38,7 +35,6 @@
 
 
 <script lang="ts" setup>
-
 import { ref } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
@@ -47,6 +43,7 @@ import 'element-plus/dist/index.css';
 import request from '@/utils/Request';
 import message from '@/utils/Message';
 import dayjs from 'dayjs';
+import type { ArticleDetail } from '@/types/Article';
 
 const api = {
     onUploadImg: '/upload/image',
@@ -57,30 +54,15 @@ const text = ref<string>("# 111");
 const dialogVisible = ref<boolean>(false);
 let pendingMarkdown = '';
 
-
-interface ArticleDetail {
-    title: string;
-    author: string;
-    description: string;
-    createDate: Date | null;
-    updateDate: Date | null;
-    wordCount: number;
-    readTime: number;
-    cover: string;
-    type: string;
-    content: string;
-}
-
 const articleDetail = ref<ArticleDetail>({
     title: 'a',
     author: 'a',
     description: 'a',
-    createDate: null,
-    updateDate: null,
+    createTime: null,
+    updateTime: null,
     wordCount: 0,
     readTime: 1,
     cover: '',
-    type: 'a',
     content: '',
 });
 
@@ -105,8 +87,8 @@ const submitArticle = async () => {
 
     message.info('正在保存文章...');
 
-    articleDetail.value.createDate = dayjs().toDate();
-    articleDetail.value.updateDate = dayjs().toDate();
+    articleDetail.value.createTime = dayjs().toDate();
+    articleDetail.value.updateTime = dayjs().toDate();
     articleDetail.value.wordCount = pendingMarkdown.length
     articleDetail.value.readTime = Math.ceil(pendingMarkdown.length / 400)
 
@@ -115,11 +97,10 @@ const submitArticle = async () => {
         `title: ${articleDetail.value.title}`,
         `author: ${articleDetail.value.author}`,
         `description: ${articleDetail.value.description}`,
-        `createTime: ${dayjs(articleDetail.value.createDate).format('YYYY-MM-DD HH:mm:ss')}`,
-        `updateTime: ${dayjs(articleDetail.value.updateDate).format('YYYY-MM-DD HH:mm:ss')}`,
+        `createTime: ${dayjs(articleDetail.value.createTime).format('YYYY-MM-DD HH:mm:ss')}`,
+        `updateTime: ${dayjs(articleDetail.value.updateTime).format('YYYY-MM-DD HH:mm:ss')}`,
         `wordCount: ${articleDetail.value.wordCount}`,
         `readTime: ${articleDetail.value.readTime}`,
-        `type: ${articleDetail.value.type}`,
         '---',
         ''
     ].join('\n');
@@ -172,11 +153,10 @@ const clearData = () => {
     articleDetail.value.title = '';
     articleDetail.value.author = '';
     articleDetail.value.description = '';
-    articleDetail.value.createDate = null;
-    articleDetail.value.updateDate = null;
+    articleDetail.value.createTime = null;
+    articleDetail.value.updateTime = null;
     articleDetail.value.wordCount = 0;
     articleDetail.value.readTime = 1;
-    articleDetail.value.type = '';
     articleDetail.value.content = '';
     articleDetail.value.cover = '';
     fileList.value = [];
