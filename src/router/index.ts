@@ -39,6 +39,12 @@ const routes: RouteRecordRaw[] = [
                         meta: { title: '404', hidden: true, roles: ['admin', 'general'] }
                     },
                     {
+                        path: '/list',
+                        name: 'List',
+                        component: () => import('@/views/list/ListView.vue'),
+                        meta: { title: '文章列表', roles: ['admin'] }
+                    },
+                    {
                         path: 'edit',
                         name: 'Edit',
                         component: () => import('@/views/edit/EditVIew.vue'),
