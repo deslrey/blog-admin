@@ -17,7 +17,7 @@
 
         <div class="pagination-wrapper">
             <el-pagination background layout="total, sizes, prev, pager, next, jumper"
-                :current-page="pagination.pageNum" :page-size="pagination.pageSize" :page-sizes="[10, 15, 20]"
+                :current-page="pagination.pageNum" :page-size="pagination.pageSize" :page-sizes="[10, 15, 20, 50]"
                 :total="pagination.total" @current-change="handlePageChange" @size-change="handleSizeChange" />
         </div>
 
@@ -37,7 +37,7 @@ const allArticles = ref<ArticleVO[]>([]); // 全部数据
 
 const pagination = reactive({
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 50,
     total: 0,
 });
 
@@ -85,8 +85,11 @@ const formatDate = (date: Date | null): string => {
 }
 
 .pagination-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    z-index: 1000;
 }
 </style>
