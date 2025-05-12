@@ -10,21 +10,21 @@
 .main {
     flex: 1;
     overflow-y: auto;
-    background: #f9fafc;
-    padding: 20px;
+    /* background: #f9fafc; */
+    padding: 1px;
     display: flex;
     flex-direction: column;
 }
 
 .content-wrapper {
-    background: #fff;
+    /* background: #fff; */
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 12px;
-    /* margin: 0 auto; */
-    width: 99%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 1px;
+    margin: 0 auto;
+    width: 100%;
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
     border-radius: 12px;
     min-height: 0;
 }
