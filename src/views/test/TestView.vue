@@ -45,12 +45,15 @@
 
 <script setup lang="ts">
 import type { ArticleVO } from '@/types/Article';
+import message from '@/utils/Message';
 import request from '@/utils/Request';
 import dayjs from 'dayjs';
+import { id } from 'element-plus/es/locale/index.mjs';
 import { ref, reactive, computed, onMounted } from 'vue';
 
 const api = {
     articleList: '/article/articleList',
+    updateExist: '/article/updateExist'
 };
 
 const allArticles = ref<ArticleVO[]>([]);
@@ -84,8 +87,22 @@ const handleSizeChange = (newSize: number) => {
     pagination.pageSize = newSize;
     pagination.pageNum = 1;
 };
-const handleToggle = (row: ArticleVO) => {
-    console.log('启用状态切换:', row.id, row.exist);
+
+// 修改文章状态
+const handleToggle = async (row: ArticleVO) => {
+    const result = await request.post(api.updateExist, { id: row.id, exist: row.exist }, {}, 'form');
+    if (result.code !== 200) {
+        message.error(result.message)
+        return
+    }
+
+    articleList.value.map((item) => {
+        if (item.id === row.id) {
+            item.exist = !item.exist
+        }
+    })
+    message.success(result.message)
+
 };
 
 const handleEdit = (row: ArticleVO) => {
