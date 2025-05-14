@@ -1,0 +1,1 @@
+export const toolbars: any = ['bold', 'underline', 'italic', 'strikeThrough', 'title', '-', 'sub', 'sup', 'quote', '-', 'unorderedList', 'orderedList', 'task', '-', 'codeRow', 'code', 'link', 'image', 'table', 'mermaid', 'katex', '-', 'revoke', 'next', 'prettier', 'preview', 'htmlPreview', 'catalog', '=', 'pageFullscreen', 'fullscreen', 'save'];
