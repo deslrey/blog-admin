@@ -1,5 +1,5 @@
     <template>
-        <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" />
+        <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" :toolbars="toolbars" />
         <el-dialog v-model="dialogVisible" title="填写文章信息" width="500px" @close="onDialogClose">
             <el-form :model="articleDetail" label-width="100px">
                 <el-form-item label="标题">
@@ -19,9 +19,7 @@
                             <Plus />
                         </el-icon>
                     </el-upload>
-
                 </el-form-item>
-
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
@@ -29,7 +27,6 @@
                     <el-button type="primary" @click="submitArticle">提交</el-button>
                 </div>
             </template>
-
         </el-dialog>
     </template>
 
@@ -44,6 +41,7 @@ import request from '@/utils/Request';
 import message from '@/utils/Message';
 import dayjs from 'dayjs';
 import type { ArticleDetail } from '@/types/Article';
+import { toolbars } from '@/data/ToolBars';
 
 const api = {
     onUploadImg: '/upload/image',
