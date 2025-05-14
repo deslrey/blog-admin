@@ -8,11 +8,30 @@
             <el-table-column prop="category" label="分类" />
             <el-table-column prop="createTime" label="创建时间">
                 <template #default="{ row }">
-                    {{ formatDate(row.createTime) }}
+                    <!-- {{ formatDate(row.createTime) }} -->
+                    {{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+                </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="修改时间">
+                <template #default="{ row }">
+                    <!-- {{ formatDate(row.createTime) }} -->
+                    {{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
                 </template>
             </el-table-column>
             <el-table-column prop="wordCount" label="字数" width="80" />
             <el-table-column prop="readTime" label="阅读时间" width="100" />
+            <el-table-column label="操作" width="200">
+                <template #default="{ row }">
+                    <el-button :type="row.exist ? 'danger' : 'success'" size="small" @click="handleToggle(row)">
+                        {{ row.exist ? '禁用' : '启用' }}
+                    </el-button>
+                    <el-button type="primary" size="small" @click="handleEdit(row)" style="margin-left: 8px;">
+                        编辑
+                    </el-button>
+                </template>
+            </el-table-column>
+
+
         </el-table>
 
         <div class="pagination-wrapper">
@@ -27,13 +46,14 @@
 <script setup lang="ts">
 import type { ArticleVO } from '@/types/Article';
 import request from '@/utils/Request';
+import dayjs from 'dayjs';
 import { ref, reactive, computed, onMounted } from 'vue';
 
 const api = {
     articleList: '/article/articleList',
 };
 
-const allArticles = ref<ArticleVO[]>([]); // 全部数据
+const allArticles = ref<ArticleVO[]>([]);
 
 const pagination = reactive({
     pageNum: 1,
@@ -64,18 +84,26 @@ const handleSizeChange = (newSize: number) => {
     pagination.pageSize = newSize;
     pagination.pageNum = 1;
 };
+const handleToggle = (row: ArticleVO) => {
+    console.log('启用状态切换:', row.id, row.exist);
+};
+
+const handleEdit = (row: ArticleVO) => {
+    console.log('编辑文章:', row.id);
+};
+
 
 onMounted(() => {
     getDate();
 });
 
-const formatDate = (date: Date | null): string => {
-    if (!date) return '';
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-        d.getDate()
-    ).padStart(2, '0')}`;
-};
+// const formatDate = (date: Date | null): string => {
+//     if (!date) return '';
+//     const d = new Date(date);
+//     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+//         d.getDate()
+//     ).padStart(2, '0')}`;
+// };
 
 </script>
 
