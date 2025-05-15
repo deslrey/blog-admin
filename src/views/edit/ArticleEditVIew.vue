@@ -21,36 +21,38 @@
                     class="description-area" />
             </div>
 
-
-            <!-- 右侧：封面上传 -->
+            <!-- 封面上传 -->
             <div class="form-right">
-                <el-upload class="cover-uploader" action="/upload/image" :show-file-list="false"
-                    :on-success="handleCoverSuccess" :before-upload="beforeCoverUpload">
-                    <img v-if="coverUrl" :src="coverUrl" class="cover-image" />
-                    <div v-else class="upload-placeholder">
-                        <el-icon>
-                            <Plus />
-                        </el-icon>
-                        <div>上传封面</div>
-                    </div>
+                <el-upload ref="uploadRef" :limit="1" :auto-upload="false" :on-change="handleCoverChange"
+                    :show-file-list=false :before-upload="beforeCoverUpload" :on-exceed="handleExceed"
+                    list-type="picture-card" accept="image/*">
+                    <template #trigger>
+                        <div class="upload-placeholder" v-if="!coverUrl">
+                            <el-icon>
+                                <Plus />
+                            </el-icon>
+                            <div>上传封面</div>
+                        </div>
+                        <img v-else :src="coverUrl" class="cover-image" />
+                    </template>
                 </el-upload>
             </div>
         </div>
-
-        <!-- 正文编辑器 -->
         <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" :toolbars="toolbars" />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import request from '@/utils/Request';
 import type { ArticleDetail } from '@/types/Article';
 import { toolbars } from '@/data/ToolBars';
+import message from '@/utils/Message';
+import { genFileId } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
 const api = {
     onUploadImg: '/upload/image',
@@ -60,15 +62,14 @@ const api = {
 const category = ref('');
 const tags = ref<string[]>([]);
 
-// 可选标签建议（可替换为从后台加载）
 const tagOptions = ref('');
-
-
 const text = ref<string>('# 请输入正文内容...');
 const title = ref('');
 const author = ref('');
 const description = ref('');
 const coverUrl = ref<string>(''); // 封面图片地址
+const uploadRef = ref<UploadInstance>()
+const coverFile = ref<File | null>(null);
 
 const onSave = (markdown: string, htmlPromise: Promise<string>) => {
     console.log('标题:', title.value);
@@ -77,6 +78,20 @@ const onSave = (markdown: string, htmlPromise: Promise<string>) => {
     console.log('封面:', coverUrl.value);
     console.log('markdown 内容:', markdown);
 };
+
+const handleCoverChange = (file: any) => {
+    const rawFile = file.raw;
+    coverFile.value = rawFile;
+    coverUrl.value = URL.createObjectURL(rawFile);
+};
+
+const handleExceed = (files: UploadRawFile[]) => {
+    uploadRef.value?.clearFiles()
+    const file = files[0]
+    file.uid = genFileId()
+    uploadRef.value?.handleStart(file)
+}
+
 
 const onUploadImg = async (files: File[], callback: (urls: string[]) => void) => {
     try {
@@ -100,26 +115,20 @@ const onUploadImg = async (files: File[], callback: (urls: string[]) => void) =>
     }
 };
 
-// 封面上传成功回调
-const handleCoverSuccess = (res: any) => {
-    coverUrl.value = res.data.url;
-    ElMessage.success('封面上传成功');
-};
-
-// 上传封面前的校验（可选）
 const beforeCoverUpload = (file: File) => {
     const isImage = file.type.startsWith('image/');
     const isLt2M = file.size / 1024 / 1024 < 2;
 
     if (!isImage) {
-        ElMessage.error('只能上传图片格式文件');
+        message.error('只能上传图片格式文件');
     }
     if (!isLt2M) {
-        ElMessage.error('图片大小不能超过 2MB');
+        message.error('图片大小不能超过 2MB');
     }
 
     return isImage && isLt2M;
 };
+
 </script>
 
 <style lang="less" scoped>
