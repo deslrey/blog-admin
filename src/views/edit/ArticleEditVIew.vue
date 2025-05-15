@@ -3,8 +3,8 @@
         <div class="form-header">
             <div class="form-left">
                 <div class="input-row">
-                    <el-input v-model="title" placeholder="请输入文章标题" class="input-item" />
-                    <el-input v-model="author" placeholder="请输入作者" class="input-item" />
+                    <el-input v-model="articleData.title" placeholder="请输入文章标题" class="input-item" />
+                    <el-input v-model="articleData.author" placeholder="请输入作者" class="input-item" />
                 </div>
                 <div class="input-row">
                     <el-input v-model="tagOptions" placeholder="请输入标签" class="input-half" />
@@ -17,7 +17,7 @@
 
                 </div>
 
-                <el-input v-model="description" placeholder="请输入文章简介" type="textarea" :rows="2"
+                <el-input v-model="articleData.description" placeholder="请输入文章简介" type="textarea" :rows="2"
                     class="description-area" />
             </div>
 
@@ -38,38 +38,57 @@
                 </el-upload>
             </div>
         </div>
-        <MdEditor v-model="text" @onUploadImg="onUploadImg" @onSave="onSave" :toolbars="toolbars" />
+        <MdEditor v-model="articleData.content" @onUploadImg="onUploadImg" @onSave="onSave" :toolbars="toolbars" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import request from '@/utils/Request';
-import type { ArticleDetail } from '@/types/Article';
+import type { ArticleDetail, ArticleVO } from '@/types/Article';
 import { toolbars } from '@/data/ToolBars';
 import message from '@/utils/Message';
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import { useArticleStore } from '@/stores/ArticleStore';
 
 const api = {
     onUploadImg: '/upload/image',
     saveArticle: '/article/saveArticle',
+    getArticleData: '/article/getArticleData'
 };
 
 const category = ref('');
 const tags = ref<string[]>([]);
 
 const tagOptions = ref('');
-const text = ref<string>('# 请输入正文内容...');
+
 const title = ref('');
 const author = ref('');
 const description = ref('');
 const coverUrl = ref<string>(''); // 封面图片地址
 const uploadRef = ref<UploadInstance>()
 const coverFile = ref<File | null>(null);
+
+const articleData = reactive<ArticleVO>({
+    id: 0,
+    title: '',
+    author: '',
+    imagePath: '',
+    description: '',
+    storagePath: '',
+    tags: '',
+    category: '',
+    createTime: null,
+    updateTime: null,
+    wordCount: 0,
+    readTime: 0,
+    content: '# 请输入正文内容...',
+    exist: false
+})
 
 const onSave = (markdown: string, htmlPromise: Promise<string>) => {
     console.log('标题:', title.value);
@@ -83,6 +102,7 @@ const handleCoverChange = (file: any) => {
     const rawFile = file.raw;
     coverFile.value = rawFile;
     coverUrl.value = URL.createObjectURL(rawFile);
+    message.info('修改成功')
 };
 
 const handleExceed = (files: UploadRawFile[]) => {
@@ -128,6 +148,29 @@ const beforeCoverUpload = (file: File) => {
 
     return isImage && isLt2M;
 };
+
+
+const articleStore = useArticleStore()
+
+onMounted(async () => {
+
+    const articleId: number | null = articleStore.getArticleId()
+    if (articleId === null) {
+        return
+    }
+    const result = await request.post<ArticleVO>(api.getArticleData, { id: articleId }, {}, 'form')
+    console.log('result ======> ', result);
+    if (result.code !== 200) {
+        message.error(`编辑失败: ${result.message}`)
+    }
+
+    const data = result.data
+    coverUrl.value = data.imagePath
+    Object.assign(articleData, data)
+    console.log('articleData ======> ', articleData);
+
+
+})
 
 </script>
 
