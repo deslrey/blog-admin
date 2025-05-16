@@ -15,6 +15,7 @@ export interface ArticleVO {
     id: number,
     title: string;
     author: string;
+    imagePath: string;
     description: string;
     storagePath: string
     tags: string,
