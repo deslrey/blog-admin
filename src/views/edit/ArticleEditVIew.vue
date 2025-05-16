@@ -202,6 +202,11 @@ onMounted(async () => {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media screen and (max-width: 1000px) {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .cover-uploader {
