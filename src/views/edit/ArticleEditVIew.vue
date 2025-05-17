@@ -7,7 +7,7 @@
                     <el-input v-model="articleData.author" placeholder="请输入作者" class="input-item" />
                 </div>
                 <div class="input-row">
-                    <el-input v-model="tagOptions" placeholder="请输入标签" class="input-half" />
+                    <el-input v-model="tags" placeholder="请输入标签(、号分隔)" class="input-half" />
                     <el-select v-model="category" placeholder="请选择分类或输入" class="input-half" filterable allow-create>
                         <el-option label="前端" value="frontend" />
                         <el-option label="后端" value="backend" />
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -52,7 +52,7 @@ import type { ArticleDetail, ArticleVO } from '@/types/Article';
 import { toolbars } from '@/data/ToolBars';
 import message from '@/utils/Message';
 import { genFileId } from 'element-plus'
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import type { UploadInstance, UploadRawFile } from 'element-plus'
 import { useArticleStore } from '@/stores/ArticleStore';
 
 const api = {
@@ -62,9 +62,7 @@ const api = {
 };
 
 const category = ref('');
-const tags = ref<string[]>([]);
-
-const tagOptions = ref('');
+const tags = ref('');
 
 const title = ref('');
 const author = ref('');
@@ -168,9 +166,11 @@ onMounted(async () => {
     coverUrl.value = data.imagePath
     Object.assign(articleData, data)
     console.log('articleData ======> ', articleData);
-
-
 })
+
+onUnmounted(() => {
+    console.log('this');
+});
 
 </script>
 
