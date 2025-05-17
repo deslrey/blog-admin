@@ -1,37 +1,38 @@
 <template>
     <div>
-        <el-table v-if="articleList.length > 0" :data="articleList" style="width: 100%; margin-bottom: 20px" border>
-            <el-table-column prop="id" label="ID" width="80" />
-            <el-table-column prop="title" label="标题" />
-            <el-table-column prop="author" label="作者" />
-            <el-table-column prop="tags" label="标签" />
-            <el-table-column prop="category" label="分类" />
-            <el-table-column prop="createTime" label="创建时间">
+        <el-table v-if="articleList.length > 0" :data="articleList" style="width: 100%; margin-bottom: 20px">
+            <el-table-column prop="id" label="ID" width="80" align="center" sortable />
+            <el-table-column prop="title" label="标题" align="center" sortable />
+            <el-table-column prop="author" label="作者" align="center" sortable />
+            <el-table-column prop="tags" label="标签" align="center" sortable />
+            <el-table-column prop="category" label="分类" align="center" sortable />
+            <el-table-column prop="createTime" label="创建时间" align="center" sortable>
                 <template #default="{ row }">
                     <!-- {{ formatDate(row.createTime) }} -->
                     {{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
                 </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="修改时间">
+            <el-table-column prop="createTime" label="修改时间" align="center" sortable>
                 <template #default="{ row }">
                     <!-- {{ formatDate(row.createTime) }} -->
                     {{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
                 </template>
             </el-table-column>
-            <el-table-column prop="wordCount" label="字数" width="80" />
-            <el-table-column prop="readTime" label="阅读时间" width="100" />
-            <el-table-column label="操作" width="200">
+            <el-table-column prop="wordCount" label="字数" width="80" align="center" sortable />
+            <el-table-column prop="readTime" label="阅读时间" width="110" align="center" sortable />
+
+            <el-table-column label="操作" width="200" align="center">
                 <template #default="{ row }">
-                    <el-button :type="row.exist ? 'danger' : 'success'" size="small" @click="handleToggle(row)">
-                        {{ row.exist ? '禁用' : '启用' }}
-                    </el-button>
-                    <el-button type="primary" size="small" @click="handleEdit(row)" style="margin-left: 8px;">
-                        编辑
-                    </el-button>
+                    <div class="action-buttons">
+                        <el-button :type="row.exist ? 'danger' : 'success'" size="small" @click="handleToggle(row)">
+                            {{ row.exist ? '禁用' : '启用' }}
+                        </el-button>
+                        <el-button type="primary" size="small" @click="handleEdit(row)">
+                            编辑
+                        </el-button>
+                    </div>
                 </template>
             </el-table-column>
-
-
         </el-table>
 
         <div class="pagination-wrapper">
@@ -48,7 +49,6 @@ import type { ArticleVO } from '@/types/Article';
 import message from '@/utils/Message';
 import request from '@/utils/Request';
 import dayjs from 'dayjs';
-import { id } from 'element-plus/es/locale/index.mjs';
 import { ref, reactive, computed, onMounted } from 'vue';
 
 const api = {
@@ -60,7 +60,7 @@ const allArticles = ref<ArticleVO[]>([]);
 
 const pagination = reactive({
     pageNum: 1,
-    pageSize: 50,
+    pageSize: 10,
     total: 0,
 });
 
@@ -129,12 +129,21 @@ onMounted(() => {
     margin-bottom: 20px;
 }
 
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
 .pagination-wrapper {
-    /* position: fixed; */
     bottom: 20px;
     right: 20px;
     display: flex;
     justify-content: flex-end;
-    /* z-index: 1000; */
+}
+
+/* 表头居中 */
+::v-deep .el-table__header th {
+    text-align: center !important;
 }
 </style>
