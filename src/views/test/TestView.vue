@@ -143,7 +143,7 @@ onMounted(() => {
 }
 
 /* 表头居中 */
-::v-deep .el-table__header th {
+::deep(.el-table__header th) {
     text-align: center !important;
 }
 </style>
