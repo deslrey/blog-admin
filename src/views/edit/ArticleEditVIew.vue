@@ -14,7 +14,6 @@
                         <el-option label="移动端" value="mobile" />
                         <el-option label="其他" value="other" />
                     </el-select>
-
                 </div>
 
                 <el-input v-model="articleData.description" placeholder="请输入文章简介" type="textarea" :rows="2"
@@ -68,7 +67,7 @@ const tags = ref('');
 const title = ref('');
 const author = ref('');
 const description = ref('');
-const coverUrl = ref<string>(''); // 封面图片地址
+const coverUrl = ref<string>('');
 const uploadRef = ref<UploadInstance>()
 const coverFile = ref<File | null>(null);
 
@@ -90,12 +89,34 @@ const articleData = reactive<ArticleVO>({
 })
 
 const onSave = (markdown: string, htmlPromise: Promise<string>) => {
-    console.log('标题:', title.value);
-    console.log('作者:', author.value);
-    console.log('简介:', description.value);
-    console.log('封面:', coverUrl.value);
-    console.log('markdown 内容:', markdown);
+    const appendChildToBtns = () => {
+        let btns: any = document.querySelector(".el-message-box__btns");
+        let btn = document.createElement("button");
+        btn.className = "el-button el-button--success";
+        btn.textContent = "保存";
+        btns.appendChild(btn);
+        btn.onclick = () => {
+            console.log('保存 ======> ');
+            ElMessageBox.close();
+        };
+    }
+    setTimeout(() => {
+        appendChildToBtns();
+    }, 100);
+
+    ElMessageBox.confirm('你确定要离开吗?未保存的内容将会丢失', '提示', {
+        confirmButtonText: '保存草稿',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        console.log('保存草稿======> ');
+
+    }).catch(() => {
+        console.log('取消 ======> ');
+
+    });
 };
+
 
 const handleCoverChange = (file: any) => {
     const rawFile = file.raw;
@@ -168,10 +189,6 @@ onMounted(async () => {
     Object.assign(articleData, data)
     console.log('articleData ======> ', articleData);
 })
-
-
-
-
 
 onBeforeRouteLeave((to, from, next) => {
 
