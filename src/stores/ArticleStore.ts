@@ -4,7 +4,8 @@ import { ref } from "vue";
 
 export const useArticleStore = defineStore('articleStore', () => {
     const article = ref<ArticleVO | null>(null);
-    const articleId = ref<number | null>(1)
+    const articleId = ref<number | null>(null)
+    const state = ref<boolean | null>(null)
 
     const setArticle = (date: ArticleVO) => {
         article.value = date
@@ -12,6 +13,10 @@ export const useArticleStore = defineStore('articleStore', () => {
 
     const setArticleId = (id: number) => {
         articleId.value = id
+    }
+
+    const setState = (bool: boolean) => {
+        state.value = bool
     }
 
     const getArticle = (): ArticleVO | null => {
@@ -29,6 +34,10 @@ export const useArticleStore = defineStore('articleStore', () => {
         return null
     }
 
+    const getState = (): boolean | null => {
+        return state.value
+    }
+
     const clearArticle = () => {
         article.value = null
     }
@@ -37,6 +46,10 @@ export const useArticleStore = defineStore('articleStore', () => {
         articleId.value = null
     }
 
+    const clearState = () => {
+        state.value = null
+    }
 
-    return { article, articleId, setArticle, setArticleId, getArticle, getArticleContent, getArticleId, clearArticle, clearArticleId }
+
+    return { article, articleId, state, setArticle, setArticleId, setState, getArticle, getArticleContent, getArticleId, getState, clearArticle, clearArticleId, clearState }
 })
