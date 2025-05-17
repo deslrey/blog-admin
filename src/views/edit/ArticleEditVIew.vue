@@ -43,7 +43,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -51,7 +52,7 @@ import request from '@/utils/Request';
 import type { ArticleDetail, ArticleVO } from '@/types/Article';
 import { toolbars } from '@/data/ToolBars';
 import message from '@/utils/Message';
-import { genFileId } from 'element-plus'
+import { ElMessageBox, genFileId } from 'element-plus'
 import type { UploadInstance, UploadRawFile } from 'element-plus'
 import { useArticleStore } from '@/stores/ArticleStore';
 
@@ -168,8 +169,37 @@ onMounted(async () => {
     console.log('articleData ======> ', articleData);
 })
 
-onUnmounted(() => {
-    console.log('this');
+
+
+
+
+onBeforeRouteLeave((to, from, next) => {
+
+    const appendChildToBtns = () => {
+        let btns: any = document.querySelector(".el-message-box__btns");
+        let btn = document.createElement("button");
+        btn.className = "el-button el-button--success";
+        btn.textContent = "保存";
+        btns.appendChild(btn);
+        btn.onclick = () => {
+            console.log('保存成功');
+            ElMessageBox.close();
+            next()
+        };
+    }
+    setTimeout(() => {
+        appendChildToBtns();
+    }, 100);
+
+    ElMessageBox.confirm('你确定要离开吗？未保存的内容将会丢失', '提示', {
+        confirmButtonText: '离开',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        next();
+    }).catch(() => {
+        next(false);
+    });
 });
 
 </script>
