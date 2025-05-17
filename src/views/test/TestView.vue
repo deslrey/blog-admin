@@ -41,15 +41,30 @@
                 :total="pagination.total" @current-change="handlePageChange" @size-change="handleSizeChange" />
         </div>
 
+        <el-dialog v-model="centerDialogVisible" title="编辑文章" width="500" align-center>
+            <span>是否前往文章编辑器修改 <strong>《{{ currentEditTitle }}》</strong>相关信息?</span>
+
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="centerDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="editArticlePage">
+                        确认
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
     </div>
 </template>
 
 <script setup lang="ts">
+import { useArticleStore } from '@/stores/ArticleStore';
 import type { ArticleVO } from '@/types/Article';
 import message from '@/utils/Message';
 import request from '@/utils/Request';
 import dayjs from 'dayjs';
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const api = {
     articleList: '/article/articleList',
@@ -105,22 +120,29 @@ const handleToggle = async (row: ArticleVO) => {
 
 };
 
+const currentEditId = ref<number | null>(null)
+const currentEditTitle = ref('')
+const centerDialogVisible = ref(false)
+const router = useRouter()
+const articleStore = useArticleStore()
+
 const handleEdit = (row: ArticleVO) => {
-    console.log('编辑文章:', row.id);
+    currentEditId.value = row.id
+    currentEditTitle.value = row.title
+    centerDialogVisible.value = true
 };
 
+const editArticlePage = () => {
+    if (currentEditId.value !== null) {
+        articleStore.setArticleId(currentEditId.value)
+        router.push('/articleEdit');
+    }
+    centerDialogVisible.value = false;
+}
 
 onMounted(() => {
     getDate();
 });
-
-// const formatDate = (date: Date | null): string => {
-//     if (!date) return '';
-//     const d = new Date(date);
-//     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-//         d.getDate()
-//     ).padStart(2, '0')}`;
-// };
 
 </script>
 
