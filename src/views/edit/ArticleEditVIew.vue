@@ -88,7 +88,11 @@ const articleData = reactive<ArticleVO>({
     exist: false
 })
 
-const onSave = (markdown: string, htmlPromise: Promise<string>) => {
+const getArticleData = (): ArticleVO => {
+    return articleData
+}
+
+const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
     const appendChildToBtns = () => {
         let btns: any = document.querySelector(".el-message-box__btns");
         let btn = document.createElement("button");
@@ -107,13 +111,16 @@ const onSave = (markdown: string, htmlPromise: Promise<string>) => {
     ElMessageBox.confirm('你确定要离开吗?未保存的内容将会丢失', '提示', {
         confirmButtonText: '保存草稿',
         cancelButtonText: '取消',
-        type: 'warning',
-    }).then(() => {
+        type: 'info',
+    }).then(async () => {
         console.log('保存草稿======> ');
+        const result = await request.post('', {}, {}, 'form')
+        if (result.code !== 200) {
+            message.error(result.message)
+        }
 
     }).catch(() => {
-        console.log('取消 ======> ');
-
+        message.info('保存取消')
     });
 };
 
@@ -171,14 +178,17 @@ const beforeCoverUpload = (file: File) => {
 
 
 const articleStore = useArticleStore()
+const articleId = ref<number | null>()
 
 onMounted(async () => {
 
-    const articleId: number | null = articleStore.getArticleId()
-    if (articleId === null) {
+    articleId.value = articleStore.getArticleId()
+    console.log('articleId ======> ', articleId.value);
+
+    if (articleId.value === null) {
         return
     }
-    const result = await request.post<ArticleVO>(api.getArticleData, { id: articleId }, {}, 'form')
+    const result = await request.post<ArticleVO>(api.getArticleData, { id: articleId.value }, {}, 'form')
     console.log('result ======> ', result);
     if (result.code !== 200) {
         message.error(`编辑失败: ${result.message}`)
@@ -191,6 +201,10 @@ onMounted(async () => {
 })
 
 onBeforeRouteLeave((to, from, next) => {
+    if (articleId.value === null) {
+        next()
+        return
+    }
 
     const appendChildToBtns = () => {
         let btns: any = document.querySelector(".el-message-box__btns");
