@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref, watch, defineProps, defineEmits } from 'vue'
+import { ref, watch, defineEmits } from 'vue'
 import { MenuItem } from '@/components/Table/TableComponent'
 import { menus } from '@/data/RouterData'
 
