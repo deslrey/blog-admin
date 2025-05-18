@@ -6,6 +6,7 @@ export const useArticleStore = defineStore('articleStore', () => {
     const article = ref<ArticleVO | null>(null);
     const articleId = ref<number | null>(null)
     const state = ref<boolean | null>(null)
+    const content = ref<string>('')
 
     const setArticle = (date: ArticleVO) => {
         article.value = date
@@ -17,6 +18,10 @@ export const useArticleStore = defineStore('articleStore', () => {
 
     const setState = (bool: boolean) => {
         state.value = bool
+    }
+
+    const setContent = (data: string) => {
+        content.value = data
     }
 
     const getArticle = (): ArticleVO | null => {
@@ -38,6 +43,10 @@ export const useArticleStore = defineStore('articleStore', () => {
         return state.value
     }
 
+    const getContent = (): string => {
+        return content.value
+    }
+
     const clearArticle = () => {
         article.value = null
     }
@@ -50,6 +59,14 @@ export const useArticleStore = defineStore('articleStore', () => {
         state.value = null
     }
 
+    const clearContent = () => {
+        content.value = ''
+    }
 
-    return { article, articleId, state, setArticle, setArticleId, setState, getArticle, getArticleContent, getArticleId, getState, clearArticle, clearArticleId, clearState }
+    return {
+        article, articleId, state, content,
+        setArticle, setArticleId, setState, setContent,
+        getArticle, getArticleContent, getArticleId, getState, getContent,
+        clearArticle, clearArticleId, clearState, clearContent
+    }
 })
