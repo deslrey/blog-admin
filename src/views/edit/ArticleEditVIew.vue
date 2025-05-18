@@ -7,8 +7,9 @@
                     <el-input v-model="articleData.author" placeholder="请输入作者" class="input-item" />
                 </div>
                 <div class="input-row">
-                    <el-input v-model="tags" placeholder="请输入标签(、号分隔)" class="input-half" />
-                    <el-select v-model="category" placeholder="请选择分类或输入" class="input-half" filterable allow-create>
+                    <el-input v-model="articleData.tags" placeholder="请输入标签(、号分隔)" class="input-half" />
+                    <el-select v-model="articleData.category" placeholder="请选择分类或输入" class="input-half" filterable
+                        allow-create>
                         <el-option label="前端" value="frontend" />
                         <el-option label="后端" value="backend" />
                         <el-option label="移动端" value="mobile" />
@@ -54,25 +55,21 @@ import message from '@/utils/Message';
 import { ElMessageBox, genFileId } from 'element-plus'
 import type { UploadInstance, UploadRawFile } from 'element-plus'
 import { useArticleStore } from '@/stores/ArticleStore';
+import dayjs from 'dayjs';
 
 const api = {
     onUploadImg: '/upload/image',
     saveArticle: '/article/saveArticle',
-    getArticleData: '/article/getArticleData'
+    getArticleData: '/article/getArticleData',
+    saveArticleDraft: '/articleDraft/saveArticleDraft'
 };
 
-const category = ref('');
-const tags = ref('');
-
-const title = ref('');
-const author = ref('');
-const description = ref('');
 const coverUrl = ref<string>('');
 const uploadRef = ref<UploadInstance>()
 const coverFile = ref<File | null>(null);
 
 const articleData = reactive<ArticleVO>({
-    id: 0,
+    id: null,
     title: '',
     author: '',
     imagePath: '',
@@ -87,10 +84,6 @@ const articleData = reactive<ArticleVO>({
     content: '# 请输入正文内容...',
     exist: false
 })
-
-const getArticleData = (): ArticleVO => {
-    return articleData
-}
 
 const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
     const appendChildToBtns = () => {
@@ -108,17 +101,37 @@ const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
         appendChildToBtns();
     }, 100);
 
+    articleData.updateTime = dayjs().toDate()
+    articleData.wordCount = markdown.length
+    articleData.readTime = Math.ceil(markdown.length / 400)
+
     ElMessageBox.confirm('你确定要离开吗?未保存的内容将会丢失', '提示', {
         confirmButtonText: '保存草稿',
         cancelButtonText: '取消',
         type: 'info',
     }).then(async () => {
         console.log('保存草稿======> ');
-        const result = await request.post('', {}, {}, 'form')
-        if (result.code !== 200) {
-            message.error(result.message)
+        const formData = new FormData()
+        formData.append('articleDraft', new Blob([JSON.stringify(articleData)], {
+            type: 'application/json'
+        }))
+
+        if (coverFile.value) {
+            formData.append('file', coverFile.value)
         }
 
+        const result = await request.post(api.saveArticleDraft, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+
+        if (result.code !== 200) {
+            message.error(result.message)
+            return
+        }
+        message.success(result.message)
+        clearData()
     }).catch(() => {
         message.info('保存取消')
     });
@@ -175,6 +188,26 @@ const beforeCoverUpload = (file: File) => {
 
     return isImage && isLt2M;
 };
+
+const clearData = () => {
+    articleData.id = null
+    articleData.title = ''
+    articleData.author = ''
+    articleData.imagePath = ''
+    articleData.description = ''
+    articleData.storagePath = ''
+    articleData.tags = ''
+    articleData.category = ''
+    articleData.createTime = null
+    articleData.updateTime = null
+    articleData.wordCount = 0
+    articleData.readTime = 0
+    articleData.content = '# 请输入正文内容...'
+    articleData.exist = false
+    articleId.value = null
+    coverUrl.value = ''
+    coverFile.value = null
+}
 
 
 const articleStore = useArticleStore()
