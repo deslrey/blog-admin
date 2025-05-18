@@ -85,15 +85,40 @@ const articleData = reactive<ArticleVO>({
     exist: false
 })
 
+
 const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
+
+    const formData = new FormData()
+    if (coverFile.value) {
+        formData.append('file', coverFile.value)
+    }
+
+    articleData.updateTime = dayjs().toDate()
+    articleData.wordCount = markdown.length
+    articleData.readTime = Math.ceil(markdown.length / 400)
+
+    console.log('文章数据 ======> ', articleData);
+
+
     const appendChildToBtns = () => {
         let btns: any = document.querySelector(".el-message-box__btns");
         let btn = document.createElement("button");
         btn.className = "el-button el-button--success";
         btn.textContent = "保存";
         btns.appendChild(btn);
-        btn.onclick = () => {
+        btn.onclick = async () => {
             console.log('保存 ======> ');
+            formData.append('ArticleVO', new Blob([JSON.stringify(articleData)], {
+                type: 'application/json'
+            }))
+            const result = await request.post(api.saveArticle, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+            console.log('保存文章 ======> ', result);
+
+
             ElMessageBox.close();
         };
     }
@@ -101,9 +126,6 @@ const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
         appendChildToBtns();
     }, 100);
 
-    articleData.updateTime = dayjs().toDate()
-    articleData.wordCount = markdown.length
-    articleData.readTime = Math.ceil(markdown.length / 400)
 
     ElMessageBox.confirm('你确定要离开吗?未保存的内容将会丢失', '提示', {
         confirmButtonText: '保存草稿',
@@ -111,15 +133,9 @@ const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
         type: 'info',
     }).then(async () => {
         console.log('保存草稿======> ');
-        const formData = new FormData()
         formData.append('articleDraft', new Blob([JSON.stringify(articleData)], {
             type: 'application/json'
         }))
-
-        if (coverFile.value) {
-            formData.append('file', coverFile.value)
-        }
-
         const result = await request.post(api.saveArticleDraft, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
