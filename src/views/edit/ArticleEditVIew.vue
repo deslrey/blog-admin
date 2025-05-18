@@ -49,7 +49,7 @@ import { Plus } from '@element-plus/icons-vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import request from '@/utils/Request';
-import type { ArticleDetail, ArticleVO } from '@/types/Article';
+import type { ArticleVO, ArticleDraftVO } from '@/types/Article';
 import { toolbars } from '@/data/ToolBars';
 import message from '@/utils/Message';
 import { ElMessageBox, genFileId } from 'element-plus'
@@ -61,15 +61,17 @@ const api = {
     onUploadImg: '/upload/image',
     saveArticle: '/article/saveArticle',
     getArticleData: '/article/getArticleData',
-    saveArticleDraft: '/articleDraft/saveArticleDraft'
+    saveArticleDraft: '/articleDraft/saveArticleDraft',
+    deleteArticleDraft: '/articleDraft/deleteArticleDraft'
 };
 
 const coverUrl = ref<string>('');
 const uploadRef = ref<UploadInstance>()
 const coverFile = ref<File | null>(null);
 
-const articleData = reactive<ArticleVO>({
+const articleData = reactive<ArticleDraftVO>({
     id: null,
+    articleId: null,
     title: '',
     author: '',
     imagePath: '',
@@ -81,7 +83,7 @@ const articleData = reactive<ArticleVO>({
     updateTime: null,
     wordCount: 0,
     readTime: 0,
-    content: '# 请输入正文内容...',
+    content: '',
     exist: false
 })
 
@@ -116,9 +118,15 @@ const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
                     'Content-Type': 'multipart/form-data',
                 }
             })
-            console.log('保存文章 ======> ', result);
+            if (result.code !== 200) {
+                message.error(result.message)
+            } else {
+                message.success(result.message)
+                console.log('articleId ======> ', articleData.articleId);
 
-
+                request.post(api.deleteArticleDraft, { id: articleData.articleId }, {}, 'form')
+            }
+            clearData()
             ElMessageBox.close();
         };
     }
@@ -207,6 +215,7 @@ const beforeCoverUpload = (file: File) => {
 
 const clearData = () => {
     articleData.id = null
+    articleData.articleId = null
     articleData.title = ''
     articleData.author = ''
     articleData.imagePath = ''
@@ -218,11 +227,13 @@ const clearData = () => {
     articleData.updateTime = null
     articleData.wordCount = 0
     articleData.readTime = 0
-    articleData.content = '# 请输入正文内容...'
+    articleData.content = ''
     articleData.exist = false
     articleId.value = null
     coverUrl.value = ''
     coverFile.value = null
+    articleStore.clearArticleId()
+    articleStore.clearContent()
 }
 
 
@@ -245,12 +256,20 @@ onMounted(async () => {
 
     const data = result.data
     coverUrl.value = data.imagePath
+    articleStore.setContent(data.content)
     Object.assign(articleData, data)
+    articleData.articleId = data.id
     console.log('articleData ======> ', articleData);
 })
 
 onBeforeRouteLeave((to, from, next) => {
-    if (articleId.value === null) {
+    if (articleStore.getContent() === articleData.content) {
+        clearData()
+        next()
+        return
+    }
+    if (articleId.value === null && articleStore.getContent() === articleData.content) {
+        clearData()
         next()
         return
     }
@@ -264,6 +283,7 @@ onBeforeRouteLeave((to, from, next) => {
         btn.onclick = () => {
             console.log('保存成功');
             ElMessageBox.close();
+            clearData()
             next()
         };
     }
@@ -276,6 +296,7 @@ onBeforeRouteLeave((to, from, next) => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
+        clearData()
         next();
     }).catch(() => {
         next(false);
