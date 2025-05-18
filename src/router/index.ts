@@ -51,6 +51,18 @@ const routes: RouteRecordRaw[] = [
                         meta: { title: '编辑', roles: ['admin'] },
                     },
                     {
+                        path: 'articleEdit',
+                        name: 'ArticleEdit',
+                        component: () => import('@/views/edit/ArticleEditVIew.vue'),
+                        meta: { title: '文章编辑', roles: ['admin'] },
+                    },
+                    {
+                        path: 'draft',
+                        name: 'Draft',
+                        component: () => import('@/views/draft/DraftView.vue'),
+                        meta: { title: '草稿', roles: ['admin'] },
+                    },
+                    {
                         path: 'table',
                         name: 'Table',
                         meta: { title: '表格', roles: ['admin'] },
