@@ -10,9 +10,26 @@ export interface ArticleDetail {
     content: string;
 }
 
-
 export interface ArticleVO {
     id: number | null,
+    title: string;
+    author: string;
+    imagePath: string;
+    description: string;
+    storagePath: string
+    tags: string,
+    category: string,
+    createTime: Date | null;
+    updateTime: Date | null;
+    wordCount: number;
+    readTime: number;
+    content: string;
+    exist: boolean
+}
+
+export interface ArticleDraftVO {
+    id: number | null,
+    articleId: number | null,
     title: string;
     author: string;
     imagePath: string;
