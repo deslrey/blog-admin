@@ -12,7 +12,7 @@ export interface ArticleDetail {
 
 
 export interface ArticleVO {
-    id: number,
+    id: number | null,
     title: string;
     author: string;
     imagePath: string;
