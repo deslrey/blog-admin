@@ -88,7 +88,7 @@ const articleData = reactive<ArticleDraftVO>({
 })
 
 
-const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
+const onSave = async (markdown: string, htmlPromise: Promise<string> | null) => {
 
     const formData = new FormData()
     if (coverFile.value) {
@@ -122,8 +122,6 @@ const onSave = async (markdown: string, htmlPromise: Promise<string>) => {
                 message.error(result.message)
             } else {
                 message.success(result.message)
-                console.log('articleId ======> ', articleData.articleId);
-
                 request.post(api.deleteArticleDraft, { id: articleData.articleId }, {}, 'form')
             }
             clearData()
@@ -274,24 +272,24 @@ onBeforeRouteLeave((to, from, next) => {
         return
     }
 
-    const appendChildToBtns = () => {
-        let btns: any = document.querySelector(".el-message-box__btns");
-        let btn = document.createElement("button");
-        btn.className = "el-button el-button--success";
-        btn.textContent = "保存";
-        btns.appendChild(btn);
-        btn.onclick = () => {
-            console.log('保存成功');
-            ElMessageBox.close();
-            clearData()
-            next()
-        };
-    }
-    setTimeout(() => {
-        appendChildToBtns();
-    }, 100);
+    // const appendChildToBtns = () => {
+    //     let btns: any = document.querySelector(".el-message-box__btns");
+    //     let btn = document.createElement("button");
+    //     btn.className = "el-button el-button--success";
+    //     btn.textContent = "保存";
+    //     btns.appendChild(btn);
+    //     btn.onclick = () => {
+    //         console.log('保存成功');
+    //         ElMessageBox.close();
+    //         clearData()
+    //         next()
+    //     };
+    // }
+    // setTimeout(() => {
+    //     appendChildToBtns();
+    // }, 100);
 
-    ElMessageBox.confirm('你确定要离开吗？未保存的内容将会丢失', '提示', {
+    ElMessageBox.confirm('你确定要离开吗?未保存的内容将会丢失', '提示', {
         confirmButtonText: '离开',
         cancelButtonText: '取消',
         type: 'warning',
