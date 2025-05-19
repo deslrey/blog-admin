@@ -7,6 +7,7 @@ export const useArticleStore = defineStore('articleStore', () => {
     const articleId = ref<number | null>(null)
     const state = ref<boolean | null>(null)
     const content = ref<string>('')
+    const isDraft = ref<boolean>(false)
 
     const setArticle = (date: ArticleVO) => {
         article.value = date
@@ -22,6 +23,10 @@ export const useArticleStore = defineStore('articleStore', () => {
 
     const setContent = (data: string) => {
         content.value = data
+    }
+
+    const setIsDraft = (bool: boolean) => {
+        isDraft.value = bool
     }
 
     const getArticle = (): ArticleVO | null => {
@@ -47,6 +52,10 @@ export const useArticleStore = defineStore('articleStore', () => {
         return content.value
     }
 
+    const getIsDraft = (): boolean => {
+        return isDraft.value
+    }
+
     const clearArticle = () => {
         article.value = null
     }
@@ -63,10 +72,14 @@ export const useArticleStore = defineStore('articleStore', () => {
         content.value = ''
     }
 
+    const clearIsDraft = () => {
+        isDraft.value = false
+    }
+
     return {
-        article, articleId, state, content,
-        setArticle, setArticleId, setState, setContent,
-        getArticle, getArticleContent, getArticleId, getState, getContent,
-        clearArticle, clearArticleId, clearState, clearContent
+        article, articleId, state, content, isDraft,
+        setArticle, setArticleId, setState, setContent, setIsDraft,
+        getArticle, getArticleContent, getArticleId, getState, getContent, getIsDraft,
+        clearArticle, clearArticleId, clearState, clearContent, clearIsDraft
     }
 })
