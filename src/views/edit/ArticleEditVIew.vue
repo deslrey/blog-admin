@@ -62,6 +62,7 @@ const api = {
     saveArticle: '/article/saveArticle',
     getArticleData: '/article/getArticleData',
     saveArticleDraft: '/articleDraft/saveArticleDraft',
+    getArticleDraftData: '/articleDraft/getArticleDraftData',
     deleteArticleDraft: '/articleDraft/deleteArticleDraft'
 };
 
@@ -232,6 +233,7 @@ const clearData = () => {
     coverFile.value = null
     articleStore.clearArticleId()
     articleStore.clearContent()
+    articleStore.clearIsDraft()
 }
 
 
@@ -246,8 +248,18 @@ onMounted(async () => {
     if (articleId.value === null) {
         return
     }
-    const result = await request.post<ArticleVO>(api.getArticleData, { id: articleId.value }, {}, 'form')
-    console.log('result ======> ', result);
+
+    let result = null;
+
+    if (articleStore.getIsDraft()) {
+        result = await request.post(api.getArticleDraftData, { id: articleId.value }, {}, 'form')
+        console.log('草稿读取数据 ======> ', result);
+    } else {
+        result = await request.post<ArticleVO>(api.getArticleData, { id: articleId.value }, {}, 'form')
+        console.log('不是草稿数据 ======> ', result);
+    }
+
+
     if (result.code !== 200) {
         message.error(`编辑失败: ${result.message}`)
     }
