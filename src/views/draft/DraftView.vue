@@ -88,15 +88,6 @@ const articleList = computed(() => {
 
 const loading = ref(true);
 
-const getDate = async () => {
-    loading.value = true;
-    const result = await request.get(api.getArticleDraftList);
-    allArticles.value = result.data;
-    pagination.total = result.data.length;
-    loading.value = false;
-};
-
-
 const handlePageChange = (newPage: number) => {
     pagination.pageNum = newPage;
 };
@@ -141,8 +132,12 @@ const editArticlePage = () => {
     centerDialogVisible.value = false;
 }
 
-onMounted(() => {
-    getDate();
+onMounted(async () => {
+    loading.value = true;
+    const result = await request.get(api.getArticleDraftList);
+    allArticles.value = result.data;
+    pagination.total = result.data.length;
+    loading.value = false;
 });
 
 </script>
