@@ -37,9 +37,9 @@
             </el-table>
 
             <div class="pagination-wrapper">
-                <el-pagination background layout="total, sizes, prev, pager, next, jumper"
-                    :current-page="pagination.pageNum" :page-size="pagination.pageSize" :page-sizes="[10, 15, 20, 50]"
-                    :total="pagination.total" @current-change="handlePageChange" @size-change="handleSizeChange" />
+                <el-pagination layout="total, sizes, prev, pager, next, jumper" :current-page="pagination.pageNum"
+                    :page-size="pagination.pageSize" :page-sizes="[10, 15, 20, 50]" :total="pagination.total"
+                    @current-change="handlePageChange" @size-change="handleSizeChange" />
             </div>
         </div>
 
@@ -150,7 +150,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .el-button {
     margin-bottom: 20px;
 }
@@ -162,10 +162,11 @@ onMounted(() => {
 }
 
 .pagination-wrapper {
-    bottom: 20px;
-    right: 20px;
     display: flex;
     justify-content: flex-end;
+    margin-top: 16px;
+    bottom: 20px;
+    right: 20px;
 }
 
 .article-container {
@@ -187,5 +188,32 @@ onMounted(() => {
 
 ::deep(.el-table__header th) {
     text-align: center !important;
+}
+
+@media screen and (max-width: 1000px) {
+    .pagination-wrapper {
+        justify-content: center;
+    }
+
+    ::v-deep(.el-pagination) {
+        font-size: 12px;
+
+        button,
+        .el-pagination__editor,
+        .el-pagination__sizes,
+        .el-pagination__jump {
+            transform: scale(0.85);
+        }
+
+        .el-pagination__total {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .el-pagination__sizes,
+        .el-pagination__jump {
+            display: none;
+        }
+    }
 }
 </style>
