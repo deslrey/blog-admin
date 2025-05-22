@@ -1,44 +1,46 @@
 <template>
-    <div>
-        <el-table v-if="articleList.length > 0" :data="articleList" style="width: 100%; margin-bottom: 20px">
-            <el-table-column prop="id" label="ID" width="80" align="center" sortable />
-            <el-table-column prop="title" label="标题" align="center" sortable />
-            <el-table-column prop="author" label="作者" align="center" sortable />
-            <el-table-column prop="tags" label="标签" align="center" sortable />
-            <el-table-column prop="category" label="分类" align="center" sortable />
-            <el-table-column prop="createTime" label="创建时间" align="center" sortable>
-                <template #default="{ row }">
-                    <!-- {{ formatDate(row.createTime) }} -->
-                    {{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="createTime" label="修改时间" align="center" sortable>
-                <template #default="{ row }">
-                    <!-- {{ formatDate(row.createTime) }} -->
-                    {{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="wordCount" label="字数" width="80" align="center" sortable />
-            <el-table-column prop="readTime" label="阅读时间" width="110" align="center" sortable />
+    <div class="article-container">
+        <div class="table-card">
+            <el-table :data="articleList" style="width: 100%; margin-bottom: 20px" v-loading="loading">
+                <el-table-column prop="id" label="ID" width="80" align="center" sortable />
+                <el-table-column prop="title" label="标题" align="center" sortable />
+                <el-table-column prop="author" label="作者" align="center" sortable />
+                <el-table-column prop="tags" label="标签" align="center" sortable />
+                <el-table-column prop="category" label="分类" align="center" sortable />
+                <el-table-column prop="createTime" label="创建时间" align="center" sortable>
+                    <template #default="{ row }">
+                        <!-- {{ formatDate(row.createTime) }} -->
+                        {{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="createTime" label="修改时间" align="center" sortable>
+                    <template #default="{ row }">
+                        <!-- {{ formatDate(row.createTime) }} -->
+                        {{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="wordCount" label="字数" width="80" align="center" sortable />
+                <el-table-column prop="readTime" label="阅读时间" width="110" align="center" sortable />
 
-            <el-table-column label="操作" width="200" align="center">
-                <template #default="{ row }">
-                    <div class="action-buttons">
-                        <el-button :type="row.exist ? 'danger' : 'success'" size="small" @click="handleToggle(row)">
-                            {{ row.exist ? '禁用' : '启用' }}
-                        </el-button>
-                        <el-button type="primary" size="small" @click="handleEdit(row)">
-                            编辑
-                        </el-button>
-                    </div>
-                </template>
-            </el-table-column>
-        </el-table>
+                <el-table-column label="操作" width="200" align="center">
+                    <template #default="{ row }">
+                        <div class="action-buttons">
+                            <el-button :type="row.exist ? 'danger' : 'success'" size="small" @click="handleToggle(row)">
+                                {{ row.exist ? '禁用' : '启用' }}
+                            </el-button>
+                            <el-button type="primary" size="small" @click="handleEdit(row)">
+                                编辑
+                            </el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
 
-        <div class="pagination-wrapper">
-            <el-pagination background layout="total, sizes, prev, pager, next, jumper"
-                :current-page="pagination.pageNum" :page-size="pagination.pageSize" :page-sizes="[10, 15, 20, 50]"
-                :total="pagination.total" @current-change="handlePageChange" @size-change="handleSizeChange" />
+            <div class="pagination-wrapper">
+                <el-pagination background layout="total, sizes, prev, pager, next, jumper"
+                    :current-page="pagination.pageNum" :page-size="pagination.pageSize" :page-sizes="[10, 15, 20, 50]"
+                    :total="pagination.total" @current-change="handlePageChange" @size-change="handleSizeChange" />
+            </div>
         </div>
 
         <el-dialog v-model="centerDialogVisible" title="编辑文章" width="500" align-center>
@@ -53,7 +55,6 @@
                 </div>
             </template>
         </el-dialog>
-
     </div>
 </template>
 
@@ -86,13 +87,16 @@ const articleList = computed(() => {
     return allArticles.value.slice(start, end);
 });
 
-const getDate = async () => {
-    const result = await request.get(api.articleList);
-    console.log('articleList ======> ', result);
+const loading = ref(true);
 
+const getDate = async () => {
+    loading.value = true;
+    const result = await request.get(api.articleList);
     allArticles.value = result.data;
     pagination.total = result.data.length;
+    loading.value = false;
 };
+
 
 const handlePageChange = (newPage: number) => {
     pagination.pageNum = newPage;
@@ -164,7 +168,23 @@ onMounted(() => {
     justify-content: flex-end;
 }
 
-/* 表头居中 */
+.article-container {
+    padding: 10px;
+    background-color: #f5f7fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table-card {
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
 ::deep(.el-table__header th) {
     text-align: center !important;
 }
