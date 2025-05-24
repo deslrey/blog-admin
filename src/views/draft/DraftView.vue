@@ -144,7 +144,7 @@ onMounted(async () => {
 
 <style lang="less" scoped>
 .article-container {
-    padding: 20px;
+    padding: 10px;
     // background-color: #f2f4f8;
     display: flex;
     flex-direction: column;
@@ -152,9 +152,9 @@ onMounted(async () => {
 
     .table-card {
         background-color: #fff;
-        padding: 24px;
+        padding: 16px;
         border-radius: 12px;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         width: 100%;
         transition: all 0.3s ease;
 

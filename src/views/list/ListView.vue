@@ -193,6 +193,7 @@ onMounted(() => {
 @media screen and (max-width: 1000px) {
     .pagination-wrapper {
         justify-content: center;
+        margin-top: 16px;
     }
 
     ::v-deep(.el-pagination) {
