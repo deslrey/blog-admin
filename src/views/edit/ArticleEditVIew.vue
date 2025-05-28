@@ -89,6 +89,7 @@ const articleData = reactive<ArticleDraftVO>({
 })
 
 
+
 const onSave = async (markdown: string, htmlPromise: Promise<string> | null) => {
 
     const formData = new FormData()
@@ -111,6 +112,27 @@ const onSave = async (markdown: string, htmlPromise: Promise<string> | null) => 
         btns.appendChild(btn);
         btn.onclick = async () => {
             console.log('保存 ======> ');
+
+            const model = [
+                '---',
+                `title: ${articleData.title}`,
+                `author: ${articleData.author}`,
+                `description: ${articleData.description}`,
+                `createTime: ${dayjs(articleData.createTime || Date.now()).format('YYYY-MM-DD HH:mm:ss')}`,
+                `updateTime: ${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}`,
+                `wordCount: ${articleData.wordCount}`,
+                `readTime: ${articleData.readTime}`,
+                '---',
+                ''
+            ].join('\n');
+
+            articleData.content = model + '\n\n' + articleData.content;
+
+
+            console.log('最后的数据为 ======> ', articleData.content);
+
+
+
             formData.append('ArticleVO', new Blob([JSON.stringify(articleData)], {
                 type: 'application/json'
             }))
