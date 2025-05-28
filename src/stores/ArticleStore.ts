@@ -5,6 +5,7 @@ import { ref } from "vue";
 export const useArticleStore = defineStore('articleStore', () => {
     const article = ref<ArticleVO | null>(null);
     const articleId = ref<number | null>(null)
+    const articleDraftId = ref<number | null>(null)
     const state = ref<boolean | null>(null)
     const content = ref<string>('')
     const isDraft = ref<boolean>(false)
@@ -27,6 +28,10 @@ export const useArticleStore = defineStore('articleStore', () => {
 
     const setIsDraft = (bool: boolean) => {
         isDraft.value = bool
+    }
+
+    const setArticleDraftId = (id: number) => {
+        articleDraftId.value = id
     }
 
     const getArticle = (): ArticleVO | null => {
@@ -56,6 +61,10 @@ export const useArticleStore = defineStore('articleStore', () => {
         return isDraft.value
     }
 
+    const getArticleDraftId = (): number | null => {
+        return articleDraftId.value
+    }
+
     const clearArticle = () => {
         article.value = null
     }
@@ -76,10 +85,15 @@ export const useArticleStore = defineStore('articleStore', () => {
         isDraft.value = false
     }
 
+    const clearArticleDraftId = () => {
+        articleDraftId.value = null
+    }
+
+
     return {
-        article, articleId, state, content, isDraft,
-        setArticle, setArticleId, setState, setContent, setIsDraft,
-        getArticle, getArticleContent, getArticleId, getState, getContent, getIsDraft,
-        clearArticle, clearArticleId, clearState, clearContent, clearIsDraft
+        article, articleId, state, content, isDraft, articleDraftId,
+        setArticle, setArticleId, setState, setContent, setIsDraft, setArticleDraftId,
+        getArticle, getArticleContent, getArticleId, getState, getContent, getIsDraft, getArticleDraftId,
+        clearArticle, clearArticleId, clearState, clearContent, clearIsDraft, clearArticleDraftId
     }
 })
