@@ -96,7 +96,7 @@ const onSave = async (markdown: string, htmlPromise: Promise<string> | null) => 
         formData.append('file', coverFile.value)
     }
 
-    articleData.updateTime = dayjs().toDate()
+    // articleData.updateTime = dayjs().toDate()
     articleData.wordCount = markdown.length
     articleData.readTime = Math.ceil(markdown.length / 400)
 
@@ -123,7 +123,9 @@ const onSave = async (markdown: string, htmlPromise: Promise<string> | null) => 
                 message.error(result.message)
             } else {
                 message.success(result.message)
-                request.post(api.deleteArticleDraft, { id: articleData.articleId }, {}, 'form')
+                if (articleDraftId.value !== null) {
+                    request.post(api.deleteArticleDraft, { articleId: articleId.value, articleDraftId: articleDraftId.value }, {}, 'form')
+                }
             }
             clearData()
             ElMessageBox.close();
@@ -234,25 +236,27 @@ const clearData = () => {
     articleStore.clearArticleId()
     articleStore.clearContent()
     articleStore.clearIsDraft()
+    articleStore.clearArticleDraftId()
 }
-
 
 const articleStore = useArticleStore()
 const articleId = ref<number | null>()
+const articleDraftId = ref<number | null>()
 
 onMounted(async () => {
 
     articleId.value = articleStore.getArticleId()
+    articleDraftId.value = articleStore.getArticleDraftId()
     console.log('articleId ======> ', articleId.value);
-
-    if (articleId.value === null) {
+    console.log('articleDraftId ======> ', articleDraftId.value);
+    if (articleId.value === null && articleDraftId.value === null) {
         return
     }
 
     let result = null;
 
     if (articleStore.getIsDraft()) {
-        result = await request.post(api.getArticleDraftData, { id: articleId.value }, {}, 'form')
+        result = await request.post(api.getArticleDraftData, { id: articleDraftId.value }, {}, 'form')
         console.log('草稿读取数据 ======> ', result);
     } else {
         result = await request.post<ArticleVO>(api.getArticleData, { id: articleId.value }, {}, 'form')
@@ -262,13 +266,17 @@ onMounted(async () => {
 
     if (result.code !== 200) {
         message.error(`编辑失败: ${result.message}`)
+        return
     }
 
     const data = result.data
     coverUrl.value = data.imagePath
     articleStore.setContent(data.content)
     Object.assign(articleData, data)
-    articleData.articleId = data.id
+    if (!articleStore.getIsDraft() && articleId.value !== null) {
+        articleData.id = null
+        articleData.articleId = articleId.value
+    }
     console.log('articleData ======> ', articleData);
 })
 
