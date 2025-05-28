@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { useArticleStore } from '@/stores/ArticleStore';
-import type { ArticleVO } from '@/types/Article';
+import type { ArticleDraftVO } from '@/types/Article';
 import message from '@/utils/Message';
 import request from '@/utils/Request';
 import dayjs from 'dayjs';
@@ -72,7 +72,7 @@ const api = {
     deleteDraft: '/articleDraft/deleteDraft'
 };
 
-const allArticles = ref<ArticleVO[]>([]);
+const allArticles = ref<ArticleDraftVO[]>([]);
 
 const pagination = reactive({
     pageNum: 1,
@@ -97,8 +97,7 @@ const handleSizeChange = (newSize: number) => {
     pagination.pageNum = 1;
 };
 
-// 删除草稿
-const handleToggle = async (row: ArticleVO) => {
+const handleToggle = async (row: ArticleDraftVO) => {
     const result = await request.post(api.deleteDraft, { id: row.id }, {}, 'form');
     if (result.code !== 200) {
         message.error(result.message);
@@ -111,21 +110,26 @@ const handleToggle = async (row: ArticleVO) => {
 };
 
 
-const currentEditId = ref<number | null>(null)
+const articleId = ref<number | null>(null)
+const articleDraftId = ref<number | null>(null)
 const currentEditTitle = ref('')
 const centerDialogVisible = ref(false)
 const router = useRouter()
 const articleStore = useArticleStore()
 
-const handleEdit = (row: ArticleVO) => {
-    currentEditId.value = row.id
+const handleEdit = (row: ArticleDraftVO) => {
+    articleDraftId.value = row.id
+    articleId.value = row.articleId
     currentEditTitle.value = row.title
     centerDialogVisible.value = true
 };
 
 const editArticlePage = () => {
-    if (currentEditId.value !== null) {
-        articleStore.setArticleId(currentEditId.value)
+    if (articleDraftId.value !== null) {
+        articleStore.setArticleDraftId(articleDraftId.value)
+        if (articleId.value !== null) {
+            articleStore.setArticleId(articleId.value)
+        }
         articleStore.setIsDraft(true)
         router.push('/articleEdit');
     }
@@ -135,6 +139,13 @@ const editArticlePage = () => {
 onMounted(async () => {
     loading.value = true;
     const result = await request.get(api.getArticleDraftList);
+    if (result.code !== 200) {
+        message.error(result.message)
+        loading.value = false
+        return
+    }
+    console.log('数据======> ', result.data);
+
     allArticles.value = result.data;
     pagination.total = result.data.length;
     loading.value = false;

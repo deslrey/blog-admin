@@ -124,21 +124,21 @@ const handleToggle = async (row: ArticleVO) => {
 
 };
 
-const currentEditId = ref<number | null>(null)
+const articleId = ref<number | null>(null)
 const currentEditTitle = ref('')
 const centerDialogVisible = ref(false)
 const router = useRouter()
 const articleStore = useArticleStore()
 
 const handleEdit = (row: ArticleVO) => {
-    currentEditId.value = row.id
+    articleId.value = row.id
     currentEditTitle.value = row.title
     centerDialogVisible.value = true
 };
 
 const editArticlePage = () => {
-    if (currentEditId.value !== null) {
-        articleStore.setArticleId(currentEditId.value)
+    if (articleId.value !== null) {
+        articleStore.setArticleId(articleId.value)
         router.push('/articleEdit');
     }
     centerDialogVisible.value = false;
