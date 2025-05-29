@@ -37,13 +37,13 @@ service.interceptors.response.use(
         const res = response.data;
         if (res.code !== 200) {
             // 错误提示可以扩展
-            // message.error(res.message || '请求失败');
+            message.error(res.message || '请求失败');
             return Promise.reject(res);
         }
         return res;
     },
     (error) => {
-        // message.error(error.message || '网络错误，请稍后再试！'); // 错误提示
+        message.error(error.message || '网络错误，请稍后再试！'); // 错误提示
         return Promise.reject(error);
     }
 );
