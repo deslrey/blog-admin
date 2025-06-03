@@ -5,6 +5,16 @@ import { createRouter, createWebHistory, type RouteRecordRaw, } from "vue-router
 
 export const asideRoutes: RouteRecordRaw[] = [
     {
+        path: '/',
+        redirect: '/front'
+    },
+    {
+        path: 'front',
+        name: 'Front',
+        component: () => import('@/views/front/frontView.vue'),
+        meta: { title: '主页', roles: ['admin', 'general'] },
+    },
+    {
         path: 'user',
         name: 'User',
         component: () => import('@/views/user/UserView.vue'),
