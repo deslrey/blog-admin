@@ -65,8 +65,21 @@ const routes: RouteRecordRaw[] = [
                     {
                         path: 'visitor',
                         name: 'Visitor',
-                        component: () => import('@/views/visitor/VisitorView.vue'),
                         meta: { title: '访客', roles: ['admin'] },
+                        children: [
+                            {
+                                path: 'list',
+                                name: 'VisitorList',
+                                component: () => import('@/views/visitor/VisitorListView.vue'),
+                                meta: { title: '访客列表', roles: ['admin', 'general'] }
+                            },
+                            {
+                                path: 'log',
+                                name: 'VisitorLog',
+                                component: () => import('@/views/visitor/VisitorLogView.vue'),
+                                meta: { title: '访客日志', roles: ['admin'] }
+                            }
+                        ]
                     },
                     {
                         path: 'table',

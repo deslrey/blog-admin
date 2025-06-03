@@ -1,6 +1,6 @@
 <template>
     <div>
-        我是模板
+        访客日志
     </div>
 </template>
 

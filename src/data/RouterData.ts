@@ -7,6 +7,15 @@ export const menus = [
     { name: '测试界面', path: '/test', icon: 'icon-qq' },
     { name: '文章列表', path: '/list', icon: 'icon-qq' },
     {
+        name: '访客',
+        path: '/visitor',
+        icon: 'icon-qq',
+        children: [
+            { name: '访客列表', path: '/visitor/list', icon: 'icon-qq' },
+            { name: '访客日志', path: '/visitor/log', icon: 'icon-qq' }
+        ]
+    },
+    {
         name: '表格',
         path: '/table',
         icon: 'icon-qq',
