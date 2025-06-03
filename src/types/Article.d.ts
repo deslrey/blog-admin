@@ -24,6 +24,7 @@ export interface ArticleVO {
     wordCount: number;
     readTime: number;
     content: string;
+    pageViews: number,
     exist: boolean
 }
 

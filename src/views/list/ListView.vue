@@ -21,6 +21,7 @@
                 </el-table-column>
                 <el-table-column prop="wordCount" label="字数" width="80" align="center" sortable />
                 <el-table-column prop="readTime" label="阅读时间" width="110" align="center" sortable />
+                <el-table-column prop="pageViews" label="浏览量" width="110" align="center" sortable />
 
                 <el-table-column label="操作" width="200" align="center">
                     <template #default="{ row }">
