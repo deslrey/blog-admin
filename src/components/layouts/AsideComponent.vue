@@ -16,7 +16,11 @@
 import { useRoute } from 'vue-router'
 import { ref, watch, defineEmits } from 'vue'
 import { MenuItem } from '@/components/Table/TableComponent'
-import { menus } from '@/data/RouterData'
+import { generateMenus } from '@/utils/RouteToMenu'
+import { asideRoutes } from '@/router'
+// import { menus } from '@/data/RouterData'
+
+const menus = generateMenus(asideRoutes)
 
 const route = useRoute()
 const props = defineProps<{ isAsideVisible: boolean }>()

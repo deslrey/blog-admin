@@ -2,7 +2,6 @@ export const menus = [
     { name: '首页', path: '/', icon: 'icon-qq' },
     { name: '用户管理', path: '/user', icon: 'icon-qq' },
     { name: '文章编辑', path: '/edit', icon: 'icon-qq' },
-    { name: '编辑', path: '/articleEdit', icon: 'icon-qq' },
     { name: '草稿', path: '/draft', icon: 'icon-qq' },
     { name: '测试界面', path: '/test', icon: 'icon-qq' },
     { name: '文章列表', path: '/list', icon: 'icon-qq' },
