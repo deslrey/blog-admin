@@ -17,9 +17,8 @@ export interface VisitLog {
     device: string,
     province: string,
     city: string,
-    visitCount: number,
-    firstVisit: Date,
-    lastVisit: Date,
-    visitorToken: string,
+    visitTime: Date,
+    visitDate: Date,
     description: string
+    exist: boolean
 }
