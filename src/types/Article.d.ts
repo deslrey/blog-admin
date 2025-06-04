@@ -45,3 +45,9 @@ export interface ArticleDraftVO {
     content: string;
     exist: boolean
 }
+
+
+export interface ArticleView {
+    title: string,
+    pageViews: number
+}
