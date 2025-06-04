@@ -33,12 +33,6 @@ export const asideRoutes: RouteRecordRaw[] = [
         meta: { title: '文章列表', roles: ['admin'] }
     },
     {
-        path: 'edit',
-        name: 'Edit',
-        component: () => import('@/views/edit/EditVIew.vue'),
-        meta: { title: '编辑', roles: ['admin'] },
-    },
-    {
         path: 'articleEdit',
         name: 'ArticleEdit',
         component: () => import('@/views/edit/ArticleEditVIew.vue'),
@@ -189,5 +183,12 @@ router.beforeEach((to, from, next) => {
         }
     }
 })
+
+router.afterEach((to) => {
+    const defaultTitle = '管理系统'
+    const routeTitle = to.meta?.title
+    document.title = routeTitle ? `${routeTitle} - ${defaultTitle}` : defaultTitle
+})
+
 
 export default router
