@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { ref, onMounted, shallowRef, nextTick, onBeforeUnmount } from 'vue'
 import * as echarts from 'echarts'
 import request from '@/utils/Request'
 import type { ArticleView } from '@/types/Article'
@@ -25,15 +25,15 @@ const api = {
 }
 
 const chartRef = ref<HTMLElement | null>(null)
-const chartInstance = ref<echarts.ECharts | null>(null)
+const chartInstance = shallowRef<echarts.ECharts | null>(null)
 
 const dailyChartRef = ref<HTMLElement | null>(null)
-const dailyChartInstance = ref<echarts.ECharts | null>(null)
+const dailyChartInstance = shallowRef<echarts.ECharts | null>(null)
 
 const last5DaysChartRef = ref<HTMLElement | null>(null)
-const last5DaysChartInstance = ref<echarts.ECharts | null>(null)
+const last5DaysChartInstance = shallowRef<echarts.ECharts | null>(null)
 
-const chartWidth = ref('30%')
+const chartWidth = shallowRef('30%')
 
 const getBarOption = (titles: string[], views: number[], isMobile: boolean, titleText: string) => ({
     title: {
@@ -42,7 +42,9 @@ const getBarOption = (titles: string[], views: number[], isMobile: boolean, titl
             fontSize: isMobile ? 14 : 18
         }
     },
-    tooltip: {},
+    tooltip: {
+        triggerRef: 'axis',
+    },
     xAxis: {
         type: 'category',
         data: titles,
@@ -251,7 +253,7 @@ onBeforeUnmount(() => {
 .chart-card {
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     padding: 16px;
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
@@ -268,7 +270,7 @@ onBeforeUnmount(() => {
     justify-content: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .chart-container {
         flex-direction: column;
         align-items: center;
