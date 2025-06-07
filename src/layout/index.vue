@@ -85,7 +85,7 @@ header .toggle-aside-btn {
     flex: 1;
     overflow-y: auto;
     background: #f9fafc;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
 }
