@@ -7,7 +7,8 @@
                 <el-table-column prop="platform" label="平台" align="center" sortable />
                 <el-table-column prop="browser" label="浏览器" align="center" sortable />
                 <el-table-column prop="device" label="设备" align="center" sortable />
-                <el-table-column prop="province" label="地区" align="center" sortable />
+                <el-table-column prop="country" label="国家" align="center" sortable />
+                <el-table-column prop="province" label="省份" align="center" sortable />
                 <el-table-column prop="city" label="市区" align="center" sortable />
                 <el-table-column prop="visitTime" label="访问日期" align="center" sortable>
                     <template #default="{ row }">
