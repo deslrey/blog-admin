@@ -15,10 +15,16 @@ export interface VisitLog {
     platform: string,
     browser: string,
     device: string,
+    country: string,
     province: string,
     city: string,
     visitTime: Date,
     visitDate: Date,
     description: string
     exist: boolean
+}
+
+export interface VisitCount {
+    title: string,
+    count: number
 }
