@@ -15,6 +15,12 @@ export const asideRoutes: RouteRecordRaw[] = [
         meta: { title: '主页', roles: ['admin', 'general'] },
     },
     {
+        path: 'show',
+        name: 'Show',
+        component: () => import('@/views/show/ShowView.vue'),
+        meta: { title: '展示', roles: ['admin', 'general'] },
+    },
+    {
         path: 'user',
         name: 'User',
         component: () => import('@/views/user/UserView.vue'),
